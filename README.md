@@ -43,7 +43,7 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 
 #### DeviceAuthenticityResult
 
-<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromPlayStore?: boolean; // iOS only isJailbroken?: boolean; error?: string; }</code>
+<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; error?: string; }</code>
 
 
 #### DeviceAuthenticityOptions
