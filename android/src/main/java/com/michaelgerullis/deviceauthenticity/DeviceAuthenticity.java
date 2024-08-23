@@ -11,26 +11,79 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-
-import android.os.Build;
-import android.content.Context;
-
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import android.os.Build;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.content.pm.PackageInfo;
+import android.util.Base64;
 
 @CapacitorPlugin(name = "DeviceAuthenticity")
 public class DeviceAuthenticity extends Plugin {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
+    private Context context;
+
+    public DeviceAuthenticity(Context context) {
+        this.context = context;
+    }
+
+    private String getApkSignature(Context context) {
+        if (context == null) {
+            return "Context is null";
+        }
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            String packageName = context.getPackageName();
+            PackageInfo packageInfo;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES);
+                if (packageInfo.signingInfo != null) {
+                    if (packageInfo.signingInfo.hasMultipleSigners()) {
+                        // If the app has multiple signers, you might want to handle this case
+                        // differently
+                        return "Multiple signers not supported";
+                    } else {
+                        Signature[] signatures = packageInfo.signingInfo.getSigningCertificateHistory();
+                        if (signatures != null && signatures.length > 0) {
+                            byte[] cert = signatures[0].toByteArray();
+                            MessageDigest md = MessageDigest.getInstance("SHA-256");
+                            byte[] digest = md.digest(cert);
+                            return bytesToHex(digest);
+                        }
+                    }
+                }
+            } else {
+                // For older Android versions, fall back to the deprecated method
+                // Note: These are not the same hashes and the author could not test this
+                // it only affects API level 28 and below 
+                packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+                if (packageInfo.signatures != null && packageInfo.signatures.length > 0) {
+                    byte[] cert = packageInfo.signatures[0].toByteArray();
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    byte[] digest = md.digest(cert);
+                    return bytesToHex(digest);
+                }
+            }
+            return "No signature found";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
 
     @PluginMethod
     public void checkAuthenticity(PluginCall call) {
         try {
-            Context context = getContext();
             JSObject ret = new JSObject();
             ret.put("isRooted", checkIsRooted());
             ret.put("isEmulator", isEmulator() || isRunningInEmulator());
+            ret.put("apkSignature", getApkSignature(context));
 
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
@@ -43,11 +96,24 @@ public class DeviceAuthenticity extends Plugin {
                 allowedStores.add(DEFAULT_ALLOWED_STORE);
             }
 
-            ret.put("isInstalledFromAllowedStore", isInstalledFromAllowedStore(context, allowedStores));
+            ret.put("isInstalledFromAllowedStore", isInstalledFromAllowedStore(allowedStores));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device authenticity: " + e.getMessage());
         }
+
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(0xFF & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     private boolean isEmulator() {
@@ -147,10 +213,10 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    private boolean isInstalledFromAllowedStore(Context context, List<String> allowedStores) {
+    private boolean isInstalledFromAllowedStore(List<String> allowedStores) {
         try {
-            String installer = context.getPackageManager()
-                    .getInstallerPackageName(context.getPackageName());
+            String installer = this.context.getPackageManager()
+                    .getInstallerPackageName(this.context.getPackageName());
             if (installer == null) {
                 return false;
             }

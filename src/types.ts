@@ -7,6 +7,9 @@ export type DeviceAuthenticityResult = {
   isInstalledFromAllowedStore?: boolean;
   // iOS only
   isJailbroken?: boolean;
+  // Android only
+  apkSignature?: string;
+  
   error?: string;
 };
 

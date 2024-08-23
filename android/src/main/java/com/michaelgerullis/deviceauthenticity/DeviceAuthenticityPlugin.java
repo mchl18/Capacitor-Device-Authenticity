@@ -9,7 +9,12 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "DeviceAuthenticity")
 public class DeviceAuthenticityPlugin extends Plugin {
 
-    private DeviceAuthenticity implementation = new DeviceAuthenticity();
+    private DeviceAuthenticity implementation;
+
+    @Override
+    public void load() {
+        implementation = new DeviceAuthenticity(getContext());
+    }
 
     @PluginMethod
     public void checkAuthenticity(PluginCall call) {
