@@ -27,7 +27,20 @@
   "keywords": [
     "capacitor",
     "plugin",
-    "native"
+    "native",
+    "device",
+    "security",
+    "authenticity",
+    "checksum",
+    "hash",
+    "signature",
+    "certificate",
+    "fingerprint",
+    "sha256",
+    "jailbreak",
+    "root",
+    "android",
+    "ios"
   ],
   "scripts": {
     "verify": "npm run verify:ios && npm run verify:android && npm run verify:web",
