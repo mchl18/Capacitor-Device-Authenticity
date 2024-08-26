@@ -87,14 +87,14 @@ export class DeviceAuthenticityWeb
   }
 
   // In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
-  static isValid(value: unknown): value is boolean | string {
+  isValid(value: unknown): value is boolean | string {
     return (
       typeof value === 'boolean' ||
       (typeof value === 'string' && !('error' in (value as never as object)))
     );
   }
   // In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
-  static isError(value: unknown): value is DeviceAuthenticityError {
+  isError(value: unknown): value is DeviceAuthenticityError {
     return typeof value === 'object' && value !== null && 'error' in value;
   }
 }
