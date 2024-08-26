@@ -13,6 +13,18 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         ])
     }
     
+    @objc func isEmulator(_ call: CAPPluginCall) {
+        let isEmulator = isRunningOnSimulator()
+        
+        call.resolve(isEmulator)
+    }
+
+    @objc func isJailbroken(_ call: CAPPluginCall) {
+        let isJailbroken = checkIsJailbroken()
+        
+        call.resolve(isJailbroken)
+    }
+    
     private func checkIsJailbroken() -> Bool {
         return checkPaths() || checkPrivateWrite() || checkCydia()
     }

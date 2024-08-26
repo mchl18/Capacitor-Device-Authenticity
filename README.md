@@ -15,8 +15,8 @@ npx cap sync
 
 <docgen-index>
 
-* [`checkAuthenticity(...)`](#checkauthenticity)
-* [Type Aliases](#type-aliases)
+- [`checkAuthenticity(...)`](#checkauthenticity)
+- [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -35,19 +35,33 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityresult">DeviceAuthenticityResult</a>&gt;</code>
 
---------------------
-
+---
 
 ### Type Aliases
-
 
 #### DeviceAuthenticityResult
 
 <code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only // If it is a string, it is the expected to be an error message. apkSignatureMatch?: boolean | string; error?: string; }</code>
-
 
 #### DeviceAuthenticityOptions
 
 <code>{ allowedStores?: string[]; apkSignature?: string; }</code>
 
 </docgen-api>
+
+## Type checking:
+
+In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
+
+```typescript
+const result = await DeviceAuthenticityWeb.checkTags();
+if (DeviceAuthenticityWeb.isValid(result)) {
+  const hasSuspiciousTags: boolean = result;
+} else {
+  const error: DeviceAuthenticityError = result;
+}
+```
+
+### TODO
+
+- [ ] pass overrides in both plugins

@@ -35,10 +35,10 @@ public class DeviceAuthenticity extends Plugin {
             String expectedApkSignature = call.getString("apkSignature");
             String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
             JSObject ret = new JSObject();
-            ret.put("isRooted", checkIsRooted());
-            ret.put("isEmulator", isEmulator() || isRunningInEmulator());
-            String apkSignature = getApkSignature();
-            ret.put("apkSignatureMatch", checkApkCertSignature(expectedApkSignature));
+            ret.put("isRooted", _checkIsRooted());
+            ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
+            String apkSignature = _getApkCertSignature();
+            ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
             String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
             ret.put("apkSignature", parsedApkSignature);
 
@@ -53,29 +53,135 @@ public class DeviceAuthenticity extends Plugin {
                 allowedStores.add(DEFAULT_ALLOWED_STORE);
             }
 
-            ret.put("isInstalledFromAllowedStore", isInstalledFromAllowedStore(allowedStores));
+            ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device authenticity: " + e.getMessage());
         }
     }
 
-    private String getApkSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
-        PackageInfo packageInfo;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES);
-            Signature[] signatures = packageInfo.signingInfo.getApkContentsSigners();
-            return calculateSignature(signatures[0]);
-        } else {
-            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.GET_SIGNATURES);
-            Signature[] signatures = packageInfo.signatures;
-            return calculateSignature(signatures[0]);
+    @PluginMethod
+    public void isRooted(PluginCall call) {
+        try {
+            call.resolve(_checkIsRooted());
+        } catch (Exception e) {
+            call.reject("Error checking device rooted status: " + e.getMessage());
         }
     }
 
-    private String checkApkCertSignature(String expectedApkSignature) {
+    @PluginMethod
+    public void isEmulator(PluginCall call) {
         try {
-            String apkSignature = getApkSignature();
+            call.resolve(_isEmulator() || _isRunningInEmulator());
+        } catch (Exception e) {
+            call.reject("Error checking device emulator status: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void isInstalledFromAllowedStore(PluginCall call) {
+        try {
+            // Get the allowed app stores from the call, or use default
+            JSArray allowedStoresArray = call.getArray("allowedStores");
+            List<String> allowedStores = new ArrayList<>();
+            if (allowedStoresArray != null && allowedStoresArray.length() > 0) {
+                for (int i = 0; i < allowedStoresArray.length(); i++) {
+                    allowedStores.add(allowedStoresArray.getString(i));
+                }
+            } else {
+                allowedStores.add(DEFAULT_ALLOWED_STORE);
+            }
+            call.resolve(_isInstalledFromAllowedStore(allowedStores));
+        } catch (Exception e) {
+            call.reject("Error checking device emulator status: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void getApkCertSignature(PluginCall call) {
+        try {
+            call.resolve(_getApkCertSignature());
+        } catch (Exception e) {
+            e.printStackTrace();
+            call.reject("Error getting APK certificate signature: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void checkApkCertSignature(PluginCall call) {
+        try {
+            call.resolve(_checkApkCertSignature(call.getString("expectedApkSignature")));
+        } catch (Exception e) {
+            call.reject("Error checking APK certificate signature: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void checkTags(PluginCall call) {
+        try {
+            call.resolve(_checkTag());
+        } catch (Exception e) {
+            call.reject("Error checking build tags: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void checkPaths(PluginCall call) {
+        try {
+            call.resolve(_checkPaths());
+        } catch (Exception e) {
+            call.reject("Error checking build paths: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void checkExecutableFiles(PluginCall call) {
+        try {
+            call.resolve(_checkExecutableFiles());
+        } catch (Exception e) {
+            call.reject("Error checking executable files: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
+    public void checkTags(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("error", "Not available on Android");
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void checkPaths(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("error", "Not available on Android");
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void checkExecutableFiles(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("error", "Not available on Android");
+        call.resolve(ret);
+    }
+
+    private String _getApkCertSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
+        PackageInfo packageInfo;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(),
+                    PackageManager.GET_SIGNING_CERTIFICATES);
+            Signature[] signatures = packageInfo.signingInfo.getApkContentsSigners();
+            return _calculateSignature(signatures[0]);
+        } else {
+            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(),
+                    PackageManager.GET_SIGNATURES);
+            Signature[] signatures = packageInfo.signatures;
+            return _calculateSignature(signatures[0]);
+        }
+    }
+
+    private String _checkApkCertSignature(String expectedApkSignature) {
+        try {
+            String apkSignature = _getApkCertSignature();
             String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
             String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
             boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
@@ -86,26 +192,14 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    private String calculateSignature(Signature sig) throws NoSuchAlgorithmException {
+    private String _calculateSignature(Signature sig) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(sig.toByteArray());
         byte[] digest = md.digest();
         return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : bytes) {
-            String hex = Integer.toHexString(0xFF & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
-    }
-
-    private boolean isEmulator() {
+    private boolean _isEmulator() {
         return Build.FINGERPRINT.startsWith("generic")
                 || Build.FINGERPRINT.startsWith("unknown")
                 || Build.MODEL.contains("google_sdk")
@@ -116,7 +210,7 @@ public class DeviceAuthenticity extends Plugin {
                 || "google_sdk".equals(Build.PRODUCT);
     }
 
-    private boolean isRunningInEmulator() {
+    private boolean _isRunningInEmulator() {
         boolean result = false;
         try {
             String buildDetails = Build.FINGERPRINT + Build.DEVICE + Build.MODEL + Build.BRAND + Build.PRODUCT
@@ -130,16 +224,39 @@ public class DeviceAuthenticity extends Plugin {
         return result;
     }
 
-    private boolean checkIsRooted() {
-        return checkTag() || checkPaths() || checkExecutableFiles();
+    private boolean _checkIsRooted() {
+        return _checkTag() || _checkPaths() || _checkExecutableFiles();
     }
 
-    private boolean checkTag() {
+    private boolean _checkTag() {
         String buildTags = android.os.Build.TAGS;
-        return buildTags != null && buildTags.contains("test-keys");
+        if (buildTags == null)
+            return false;
+
+        String[] rootIndicatorTags = {
+                "test-keys", // Common for many rooted devices
+                "dev-keys", // Development keys, often seen in custom ROMs
+                "userdebug", // User-debuggable build, common in rooted devices
+                "engineering", // Engineering build, may indicate a modified system
+                "release-keys-debug", // Debug version of release keys
+                "custom", // Explicitly marked as custom
+                "rooted", // Explicitly marked as rooted (rare, but possible)
+                "supersu", // Indicates SuperSU rooting tool
+                "magisk", // Indicates Magisk rooting framework
+                "lineage", // LineageOS custom ROM
+                "unofficial" // Unofficial build, common in custom ROMs
+        };
+
+        for (String tag : rootIndicatorTags) {
+            if (buildTags.toLowerCase().contains(tag.toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    private boolean checkPaths() {
+    private boolean _checkPaths() {
         String[] paths = {
                 "/system/app/Superuser.apk",
                 "/sbin/su",
@@ -159,7 +276,7 @@ public class DeviceAuthenticity extends Plugin {
         return false;
     }
 
-    private boolean checkExecutableFiles() {
+    private boolean _checkExecutableFiles() {
         ArrayList<String> executableFiles = new ArrayList<>(Arrays.asList(
                 "su",
                 "/system/xbin/su",
@@ -174,18 +291,18 @@ public class DeviceAuthenticity extends Plugin {
         for (String executableFile : executableFiles) {
             for (String command : commands) {
                 String fullCommand = executableFile + " -c " + command;
-                if (executeCommand(fullCommand)) {
+                if (_executeCommand(fullCommand)) {
                     return true;
                 }
             }
-            if (executeCommand(executableFile)) {
+            if (_executeCommand(executableFile)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean executeCommand(String command) {
+    private boolean _executeCommand(String command) {
         Process process = null;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -202,7 +319,7 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    private boolean isInstalledFromAllowedStore(List<String> allowedStores) {
+    private boolean _isInstalledFromAllowedStore(List<String> allowedStores) {
         try {
             String installer = getContext().getPackageManager()
                     .getInstallerPackageName(getContext().getPackageName());
