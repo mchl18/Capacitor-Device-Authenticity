@@ -24,12 +24,30 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         
         call.resolve(["isJailbroken": isJailbroken])
     }
-    
-    private func checkIsJailbroken() -> Bool {
-        return checkPaths() || checkPrivateWrite() || checkCydia()
+
+    @objc func checkPaths(_ call: CAPPluginCall) {
+        let hasPaths = _checkPaths()
+        
+        call.resolve(["hasPaths": hasPaths])
     }
     
-    private func checkPaths() -> Bool {
+    @objc func checkPrivateWrite(_ call: CAPPluginCall) {
+        let hasPaths = _checkPrivateWrite()
+        
+        call.resolve(["canWritePrivate": hasPaths])
+    }
+    
+    @objc func hasCydia(_ call: CAPPluginCall) {
+        let hasCydia = _checkCydia()
+        
+        call.resolve(["canWritePrivate": hasCydia])
+    }
+    
+    private func checkIsJailbroken() -> Bool {
+        return _checkPaths() || _checkPrivateWrite() || _checkCydia()
+    }
+    
+    private func _checkPaths() -> Bool {
         let fileManager = FileManager.default
         let jailbreakPaths = [
             "/Applications/Cydia.app",
@@ -48,7 +66,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         return false
     }
     
-    private func checkPrivateWrite() -> Bool {
+    private func _checkPrivateWrite() -> Bool {
         let fileManager = FileManager.default
         do {
             try "jailbreak test".write(toFile: "/private/jailbreak.txt", atomically: true, encoding: .utf8)
@@ -59,7 +77,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         }
     }
     
-    private func checkCydia() -> Bool {
+    private func _checkCydia() -> Bool {
         if let url = URL(string: "cydia://package/com.example.package") {
             return UIApplication.shared.canOpenURL(url)
         }
