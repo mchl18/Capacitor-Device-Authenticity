@@ -33,7 +33,7 @@ public class DeviceAuthenticity extends Plugin {
         this.context = context;
     }
 
-    private String getApkSignature(Context context) {
+    private String checkApkCertSignature(Context context, String expectedApkSignature) {
         if (context == null) {
             return "Context is null";
         }
@@ -41,6 +41,7 @@ public class DeviceAuthenticity extends Plugin {
             PackageManager packageManager = context.getPackageManager();
             String packageName = context.getPackageName();
             PackageInfo packageInfo;
+            String apkSignature = "";
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES);
@@ -55,23 +56,23 @@ public class DeviceAuthenticity extends Plugin {
                             byte[] cert = signatures[0].toByteArray();
                             MessageDigest md = MessageDigest.getInstance("SHA-256");
                             byte[] digest = md.digest(cert);
-                            return bytesToHex(digest);
+                            apkSignature = bytesToHex(digest);
                         }
                     }
                 }
             } else {
                 // For older Android versions, fall back to the deprecated method
                 // Note: These are not the same hashes and the author could not test this
-                // it only affects API level 28 and below 
+                // it only affects API level 28 and below
                 packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
                 if (packageInfo.signatures != null && packageInfo.signatures.length > 0) {
                     byte[] cert = packageInfo.signatures[0].toByteArray();
                     MessageDigest md = MessageDigest.getInstance("SHA-256");
                     byte[] digest = md.digest(cert);
-                    return bytesToHex(digest);
+                    apkSignature = bytesToHex(digest);
                 }
             }
-            return "No signature found";
+            return apkSignature.equals(expectedApkSignature);
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -80,10 +81,11 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void checkAuthenticity(PluginCall call) {
         try {
+            String expectedApkSignature = call.getString("apkSignature");
             JSObject ret = new JSObject();
             ret.put("isRooted", checkIsRooted());
             ret.put("isEmulator", isEmulator() || isRunningInEmulator());
-            ret.put("apkSignature", getApkSignature(context));
+            ret.put("apkSignatureMatch", checkApkCertSignature(context, expectedApkSignature));
 
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
