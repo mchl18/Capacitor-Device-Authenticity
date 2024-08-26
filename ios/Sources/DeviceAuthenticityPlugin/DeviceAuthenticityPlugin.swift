@@ -6,10 +6,16 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
         let isJailbroken = _checkIsJailbroken()
         let isEmulator = _isRunningOnSimulator()
+        let hasThirdPartyAppStore = _hasThirdPartyAppStore()
+        let canWritePrivate = _checkPrivateWrite()
+        let hasPaths = _checkPaths()
         
         call.resolve([
             "isJailbroken": isJailbroken,
-            "isEmulator": isEmulator
+            "isEmulator": isEmulator,
+            "hasThirdPartyAppStore": hasThirdPartyAppStore,
+            "canWritePrivate": canWritePrivate,
+            "hasPaths": hasPaths,
         ])
     }
     
