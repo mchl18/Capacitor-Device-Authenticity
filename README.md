@@ -4,6 +4,18 @@ Check the authenticity of an Ionic Capacitor app
 
 This plugin provides methods to check whether a device is jailbroken/rooted, inside an emulator, or not installed from the app store.
 
+This software is provided under the MIT License. The code included in this project, particularly the jailbreak detection method, is provided "as is" without warranty of any kind, express or implied.
+The authors and copyright holders of this software shall not be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+Important Notes:
+
+The jailbreak detection method provided is not guaranteed to be foolproof or comprehensive. It may not detect all instances of jailbroken devices or third-party app stores.
+This code is intended for informational and educational purposes only. It should not be relied upon as a sole means of security or integrity checking in production environments.
+The use of this code may have implications related to user privacy and device autonomy. Ensure that your use of this code complies with all applicable laws, regulations, and platform policies.
+The developers of this software do not encourage or endorse the unauthorized modification of devices or violation of terms of service of any platform.
+Users and implementers of this code are responsible for ensuring their own compliance with all relevant policies, laws, and regulations.
+
+By using this software, you acknowledge that you have read this disclaimer and agree to its terms.
+
 IMPORTANT: This plugin is still under development and is not yet ready for production use. The author has yet to verify if these calls trigger security warnings or cause app store rejections.
 
 ## Install
