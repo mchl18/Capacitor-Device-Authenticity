@@ -69,7 +69,7 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 
 </docgen-api>
 
-## Type checking:
+### Type checking:
 
 In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
 
@@ -80,6 +80,46 @@ if (DeviceAuthenticityWeb.isValid(result)) {
 } else {
   const error: DeviceAuthenticityError = result;
 }
+```
+
+### Example usage:
+
+(will try and simplify this)
+
+```typescript
+  // only available on ios and android
+  if (Capacitor.getPlatform() !== 'web') {
+    // TODO: add options to checkAuthenticity
+    const authenticityResult = await DeviceAuthenticity.checkAuthenticity();
+    const failedChecks: string[] = [];
+    // TODO: put into plugin if possible
+    if (platform === 'ios') {
+      if (authenticityResult.isEmulator) failedChecks.push('isEmulator');
+      if (authenticityResult.isJailbroken) failedChecks.push('isJailbroken');
+      if (authenticityResult.hasPaths) failedChecks.push('hasPaths');
+      if (authenticityResult.hasThirdPartyAppStore)
+        failedChecks.push('hasThirdPartyAppStore');
+    } else if (platform === 'android') {
+      if (authenticityResult.isRooted) failedChecks.push('isRooted');
+      if (authenticityResult.isEmulator) failedChecks.push('isEmulator');
+      if (!authenticityResult.apkSignatureMatch)
+        failedChecks.push('apkSignatureMatch');
+      if (!authenticityResult.isInstalledFromAllowedStore)
+        failedChecks.push('isInstalledFromAllowedStore');
+    }
+
+    if (authenticityResult.error) {
+      failedChecks.push('error: ' + authenticityResult.error);
+    }
+
+    if (failedChecks.length > 0) {
+      alert(
+        'Wir konnten ihr Gerät nicht verifizieren. Bitte wenden Sie sich an den Support. ' +
+          failedChecks.join(', ')
+      );
+      App.exitApp();
+    }
+  }
 ```
 
 ### TODO
