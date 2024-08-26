@@ -9,8 +9,13 @@ export type DeviceAuthenticityResult = {
   isJailbroken?: boolean;
   // Android only
   // If it is a string, it is the expected to be an error message.
-  apkSignatureMatch?: boolean | string;
-
+  apkSignatureMatch?: boolean;
+  // iOS only
+  hasPaths?: boolean;
+  // iOS only
+  canWritePrivate?: boolean;
+  // iOS only
+  hasThirdPartyAppStore?: boolean;
   error?: string;
 };
 
