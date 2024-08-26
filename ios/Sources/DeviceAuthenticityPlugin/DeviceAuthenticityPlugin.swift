@@ -14,11 +14,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
     
     private func checkIsJailbroken() -> Bool {
-        #if targetEnvironment(simulator)
-        return false
-        #else
         return checkPaths() || checkPrivateWrite() || checkCydia()
-        #endif
     }
     
     private func checkPaths() -> Bool {

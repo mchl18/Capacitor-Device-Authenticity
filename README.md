@@ -43,11 +43,11 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 
 #### DeviceAuthenticityResult
 
-<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only apkSignature?: string; error?: string; }</code>
+<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only // If it is a string, it is the expected to be an error message. apkSignatureMatch?: boolean | string; error?: string; }</code>
 
 
 #### DeviceAuthenticityOptions
 
-<code>{ allowedStores?: string[]; }</code>
+<code>{ allowedStores?: string[]; apkSignature?: string; }</code>
 
 </docgen-api>

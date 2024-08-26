@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,65 +28,19 @@ import android.util.Base64;
 public class DeviceAuthenticity extends Plugin {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
-    private Context context;
-
-    public DeviceAuthenticity(Context context) {
-        this.context = context;
-    }
-
-    private String checkApkCertSignature(Context context, String expectedApkSignature) {
-        if (context == null) {
-            return "Context is null";
-        }
-        try {
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo;
-            String apkSignature = "";
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES);
-                if (packageInfo.signingInfo != null) {
-                    if (packageInfo.signingInfo.hasMultipleSigners()) {
-                        // If the app has multiple signers, you might want to handle this case
-                        // differently
-                        return "Multiple signers not supported";
-                    } else {
-                        Signature[] signatures = packageInfo.signingInfo.getSigningCertificateHistory();
-                        if (signatures != null && signatures.length > 0) {
-                            byte[] cert = signatures[0].toByteArray();
-                            MessageDigest md = MessageDigest.getInstance("SHA-256");
-                            byte[] digest = md.digest(cert);
-                            apkSignature = bytesToHex(digest);
-                        }
-                    }
-                }
-            } else {
-                // For older Android versions, fall back to the deprecated method
-                // Note: These are not the same hashes and the author could not test this
-                // it only affects API level 28 and below
-                packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
-                if (packageInfo.signatures != null && packageInfo.signatures.length > 0) {
-                    byte[] cert = packageInfo.signatures[0].toByteArray();
-                    MessageDigest md = MessageDigest.getInstance("SHA-256");
-                    byte[] digest = md.digest(cert);
-                    apkSignature = bytesToHex(digest);
-                }
-            }
-            return apkSignature.equals(expectedApkSignature);
-        } catch (Exception e) {
-            return "Error: " + e.getMessage();
-        }
-    }
 
     @PluginMethod
     public void checkAuthenticity(PluginCall call) {
         try {
             String expectedApkSignature = call.getString("apkSignature");
+            String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
             JSObject ret = new JSObject();
             ret.put("isRooted", checkIsRooted());
             ret.put("isEmulator", isEmulator() || isRunningInEmulator());
-            ret.put("apkSignatureMatch", checkApkCertSignature(context, expectedApkSignature));
+            String apkSignature = getApkSignature();
+            ret.put("apkSignatureMatch", checkApkCertSignature(expectedApkSignature));
+            String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
+            ret.put("apkSignature", parsedApkSignature);
 
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
@@ -103,7 +58,39 @@ public class DeviceAuthenticity extends Plugin {
         } catch (Exception e) {
             call.reject("Error checking device authenticity: " + e.getMessage());
         }
+    }
 
+    private String getApkSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
+        PackageInfo packageInfo;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES);
+            Signature[] signatures = packageInfo.signingInfo.getApkContentsSigners();
+            return calculateSignature(signatures[0]);
+        } else {
+            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.GET_SIGNATURES);
+            Signature[] signatures = packageInfo.signatures;
+            return calculateSignature(signatures[0]);
+        }
+    }
+
+    private String checkApkCertSignature(String expectedApkSignature) {
+        try {
+            String apkSignature = getApkSignature();
+            String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
+            String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
+            boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
+            return String.valueOf(isValid);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "false";
+        }
+    }
+
+    private String calculateSignature(Signature sig) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(sig.toByteArray());
+        byte[] digest = md.digest();
+        return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
     private String bytesToHex(byte[] bytes) {
@@ -217,8 +204,8 @@ public class DeviceAuthenticity extends Plugin {
 
     private boolean isInstalledFromAllowedStore(List<String> allowedStores) {
         try {
-            String installer = this.context.getPackageManager()
-                    .getInstallerPackageName(this.context.getPackageName());
+            String installer = getContext().getPackageManager()
+                    .getInstallerPackageName(getContext().getPackageName());
             if (installer == null) {
                 return false;
             }

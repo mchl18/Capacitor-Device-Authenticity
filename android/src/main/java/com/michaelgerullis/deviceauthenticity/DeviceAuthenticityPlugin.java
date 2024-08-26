@@ -13,7 +13,7 @@ public class DeviceAuthenticityPlugin extends Plugin {
 
     @Override
     public void load() {
-        implementation = new DeviceAuthenticity(getContext());
+        implementation = new DeviceAuthenticity();
     }
 
     @PluginMethod
