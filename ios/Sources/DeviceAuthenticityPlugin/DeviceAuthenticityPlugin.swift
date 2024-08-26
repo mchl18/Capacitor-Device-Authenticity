@@ -4,8 +4,8 @@ import Capacitor
 @objc(DeviceAuthenticityPlugin)
 public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
-        let isJailbroken = checkIsJailbroken()
-        let isEmulator = isRunningOnSimulator()
+        let isJailbroken = _checkIsJailbroken()
+        let isEmulator = _isRunningOnSimulator()
         
         call.resolve([
             "isJailbroken": isJailbroken,
@@ -14,13 +14,13 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
     
     @objc func isEmulator(_ call: CAPPluginCall) {
-        let isEmulator = isRunningOnSimulator()
+        let isEmulator = _isRunningOnSimulator()
         
         call.resolve(["isEmulator": isEmulator])
     }
 
     @objc func isJailbroken(_ call: CAPPluginCall) {
-        let isJailbroken = checkIsJailbroken()
+        let isJailbroken = _checkIsJailbroken()
         
         call.resolve(["isJailbroken": isJailbroken])
     }
@@ -38,13 +38,13 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
 
     @objc func hasThirdPartyAppStore(_ call: CAPPluginCall) {
-        let hasThirdPartAppStore = _hasThirdPartAppStore()
+        let hasThirdPartyAppStore = _hasThirdPartyAppStore()
         
-        call.resolve(["hasThirdPartAppStore": hasThirdPartAppStore])
+        call.resolve(["hasThirdPartyAppStore": hasThirdPartyAppStore])
     }
     
-    private func checkIsJailbroken() -> Bool {
-        return _checkPaths() || _checkPrivateWrite() || _hasThirdPartAppStore() || _checkFork()
+    private func _checkIsJailbroken() -> Bool {
+        return _checkPaths() || _checkPrivateWrite() || _hasThirdPartyAppStore() || _checkFork()
     }
     
     private func _checkPaths() -> Bool {
@@ -88,7 +88,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         }
     }
     
-    private func _hasThirdPartAppStore() -> Bool {
+    private func _hasThirdPartyAppStore() -> Bool {
        let jailbreakSchemes = [
             "cydia://",
             "sileo://",
@@ -108,7 +108,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         return false
     }
 
-    private func isRunningOnSimulator() -> Bool {
+    private func _isRunningOnSimulator() -> Bool {
         #if arch(i386) || arch(x86_64)
             return false
         #elseif targetEnvironment(simulator)

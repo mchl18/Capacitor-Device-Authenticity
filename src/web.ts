@@ -104,6 +104,17 @@ export class DeviceAuthenticityWeb
   > {
     return { error: 'Not available on web' };
   }
+  async hasThirdPartyAppStore(): Promise<
+    { error: string } | { hasThirdPartyAppStore: boolean }
+  > {
+    return { error: 'Not available on web' };
+  }
+
+  async checkPrivateWrite(): Promise<
+    { error: string } | { canWritePrivate: boolean }
+  > {
+    return { error: 'Not available on web' };
+  }
 
   // In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
   isValid(value: unknown): value is boolean | string {
