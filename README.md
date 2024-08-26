@@ -114,7 +114,7 @@ if (DeviceAuthenticityWeb.isValid(result)) {
 
     if (failedChecks.length > 0) {
       alert(
-        'Wir konnten ihr Gerät nicht verifizieren. Bitte wenden Sie sich an den Support. ' +
+        'Could not verify your device. Failed checks: ' +
           failedChecks.join(', ')
       );
       App.exitApp();
