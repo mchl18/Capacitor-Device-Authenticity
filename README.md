@@ -4,6 +4,8 @@ Check the authenticity of an Ionic Capacitor app
 
 This plugin provides methods to check whether a device is jailbroken/rooted, inside an emulator, or not installed from the app store.
 
+IMPORTANT: This plugin is still under development and is not yet ready for production use. The author has yet to verify if these calls trigger security warnings or cause app store rejections.
+
 ## Install
 
 ```bash
