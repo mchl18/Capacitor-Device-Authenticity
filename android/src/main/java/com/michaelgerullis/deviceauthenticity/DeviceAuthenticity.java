@@ -63,7 +63,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void isRooted(PluginCall call) {
         try {
-            call.resolve(_checkIsRooted());
+            JSObject ret = new JSObject();
+            ret.put("isRooted", _checkIsRooted());
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device rooted status: " + e.getMessage());
         }
@@ -72,7 +74,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void isEmulator(PluginCall call) {
         try {
-            call.resolve(_isEmulator() || _isRunningInEmulator());
+            JSObject ret = new JSObject();
+            ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device emulator status: " + e.getMessage());
         }
@@ -91,7 +95,9 @@ public class DeviceAuthenticity extends Plugin {
             } else {
                 allowedStores.add(DEFAULT_ALLOWED_STORE);
             }
-            call.resolve(_isInstalledFromAllowedStore(allowedStores));
+            JSObject ret = new JSObject();
+            ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device emulator status: " + e.getMessage());
         }
@@ -100,7 +106,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void getApkCertSignature(PluginCall call) {
         try {
-            call.resolve(_getApkCertSignature());
+            JSObject ret = new JSObject();
+            ret.put("apkCertSignature", _getApkCertSignature());
+            call.resolve(ret);
         } catch (Exception e) {
             e.printStackTrace();
             call.reject("Error getting APK certificate signature: " + e.getMessage());
@@ -110,7 +118,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void checkApkCertSignature(PluginCall call) {
         try {
-            call.resolve(_checkApkCertSignature(call.getString("expectedApkSignature")));
+            JSObject ret = new JSObject();
+            ret.put("apkCertSignatureMatches", _checkApkCertSignature(call.getString("expectedApkSignature")));
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking APK certificate signature: " + e.getMessage());
         }
@@ -119,7 +129,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void checkTags(PluginCall call) {
         try {
-            call.resolve(_checkTag());
+            JSObject ret = new JSObject();
+            ret.put("hasTags", _checkTag());
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build tags: " + e.getMessage());
         }
@@ -128,7 +140,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void checkPaths(PluginCall call) {
         try {
-            call.resolve(_checkPaths());
+            JSObject ret = new JSObject();
+            ret.put("hasPaths", _checkPaths());
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build paths: " + e.getMessage());
         }
@@ -137,7 +151,9 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void checkExecutableFiles(PluginCall call) {
         try {
-            call.resolve(_checkExecutableFiles());
+            JSObject ret = new JSObject();
+            ret.put("hasExecutableFiles", _checkExecutableFiles());
+            call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking executable files: " + e.getMessage());
         }

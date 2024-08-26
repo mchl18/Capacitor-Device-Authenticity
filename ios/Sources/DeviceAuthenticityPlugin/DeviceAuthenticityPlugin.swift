@@ -16,13 +16,13 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func isEmulator(_ call: CAPPluginCall) {
         let isEmulator = isRunningOnSimulator()
         
-        call.resolve(isEmulator)
+        call.resolve(["isEmulator": isEmulator])
     }
 
     @objc func isJailbroken(_ call: CAPPluginCall) {
         let isJailbroken = checkIsJailbroken()
         
-        call.resolve(isJailbroken)
+        call.resolve(["isJailbroken": isJailbroken])
     }
     
     private func checkIsJailbroken() -> Bool {

@@ -50,39 +50,47 @@ export class DeviceAuthenticityWeb
     return { error: 'Not available on web' };
   }
 
-  async isEmulator(): Promise<{ error: string } | boolean> {
+  async isEmulator(): Promise<{ error: string } | { isEmulator: boolean }> {
     return { error: 'Not available on web' };
   }
 
-  async isJailbroken(): Promise<{ error: string } | boolean> {
+  async isJailbroken(): Promise<{ error: string } | { isJailbroken: boolean }> {
     return { error: 'Not available on web' };
   }
 
-  async isRooted(): Promise<{ error: string } | boolean> {
+  async isRooted(): Promise<{ error: string } | { isRooted: boolean }> {
     return { error: 'Not available on web' };
   }
 
-  async isInstalledFromAllowedStore(): Promise<{ error: string } | boolean> {
+  async isInstalledFromAllowedStore(): Promise<
+    { error: string } | { isInstalledFromAllowedStore: boolean }
+  > {
     return { error: 'Not available on web' };
   }
 
-  async getApkCertSignature(): Promise<{ error: string } | boolean> {
+  async getApkCertSignature(): Promise<
+    { error: string } | { apkCertSignature: string }
+  > {
     return { error: 'Not available on web' };
   }
 
-  async checkApkCertSignature(): Promise<{ error: string } | boolean> {
+  async checkApkCertSignature(): Promise<
+    { error: string } | { apkCertSignatureMatches: boolean }
+  > {
     return { error: 'Not available on web' };
   }
 
-  async checkTags(): Promise<{ error: string } | boolean> {
+  async checkTags(): Promise<{ error: string } | { hasTags: boolean }> {
     return { error: 'Not available on web' };
   }
 
-  async checkPaths(): Promise<{ error: string } | boolean> {
+  async checkPaths(): Promise<{ error: string } | { hasPaths: boolean }> {
     return { error: 'Not available on web' };
   }
 
-  async checkExecutableFiles(): Promise<{ error: string } | boolean> {
+  async checkExecutableFiles(): Promise<
+    { error: string } | { hasExecutableFiles: boolean }
+  > {
     return { error: 'Not available on web' };
   }
 
