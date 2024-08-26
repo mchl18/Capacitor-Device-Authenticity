@@ -26,11 +26,22 @@ export class DeviceAuthenticityWeb
 
   static DEFAULT_IOS_JAILBREAK_PATHS = [
     '/Applications/Cydia.app',
+    '/Applications/Sileo.app',
+    '/Applications/Zebra.app',
+    '/Applications/Installer.app',
+    '/Applications/Unc0ver.app',
+    '/Applications/Checkra1n.app',
     '/Library/MobileSubstrate/MobileSubstrate.dylib',
-    '/bin/bash',
     '/usr/sbin/sshd',
+    '/usr/bin/sshd',
+    '/usr/libexec/sftp-server',
     '/etc/apt',
     '/private/var/lib/apt/',
+    '/private/var/mobile/Library/Cydia/',
+    '/private/var/stash',
+    '/private/var/db/stash',
+    '/private/var/jailbreak',
+    '/var/mobile/Library/SBSettings/Themes',
   ];
 
   static DEFAULT_ANDROID_ROOTED_PATHS = [

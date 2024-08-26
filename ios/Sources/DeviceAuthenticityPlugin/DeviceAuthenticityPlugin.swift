@@ -36,7 +36,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         
         call.resolve(["canWritePrivate": hasPaths])
     }
-    
+
     @objc func hasCydia(_ call: CAPPluginCall) {
         let hasCydia = _checkCydia()
         
@@ -44,18 +44,29 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
     
     private func checkIsJailbroken() -> Bool {
-        return _checkPaths() || _checkPrivateWrite() || _checkCydia()
+        return _checkPaths() || _checkPrivateWrite() || _checkCydia() || _checkFork()
     }
     
     private func _checkPaths() -> Bool {
         let fileManager = FileManager.default
         let jailbreakPaths = [
             "/Applications/Cydia.app",
+            "/Applications/Sileo.app",
+            "/Applications/Zebra.app",
+            "/Applications/Installer.app",
+            "/Applications/Unc0ver.app",
+            "/Applications/Checkra1n.app",
             "/Library/MobileSubstrate/MobileSubstrate.dylib",
-            "/bin/bash",
             "/usr/sbin/sshd",
+            "/usr/bin/sshd",
+            "/usr/libexec/sftp-server",
             "/etc/apt",
-            "/private/var/lib/apt/"
+            "/private/var/lib/apt/",
+            "/private/var/mobile/Library/Cydia/",
+            "/private/var/stash",
+            "/private/var/db/stash",
+            "/private/var/jailbreak",
+            "/var/mobile/Library/SBSettings/Themes"
         ]
         
         for path in jailbreakPaths {
@@ -85,11 +96,19 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
 
     private func isRunningOnSimulator() -> Bool {
-        #if targetEnvironment(simulator)
+        #if arch(i386) || arch(x86_64)
+            return false
+        #elseif targetEnvironment(simulator)
             return true
         #else
             return false
         #endif
+    }
+
+    private func _checkFork() -> Bool {
+        let pointerToFork = UnsafeMutableRawPointer(bitPattern: -2)
+        let forkPtr = dlsym(pointerToFork, "fork")
+        return forkPtr != nil
     }
 
 }
