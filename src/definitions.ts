@@ -11,13 +11,17 @@ export interface DeviceAuthenticityPlugin {
 
   isEmulator(): Promise<{ isEmulator: boolean } | { error: string }>;
   // iOS only
-  isJailbroken(): Promise<{ isJailbroken: boolean } | { error: string }>;
+  isJailbroken(
+    iosJailbreakPaths?: string[],
+  ): Promise<{ isJailbroken: boolean } | { error: string }>;
   // Android only
-  isRooted(): Promise<{ isRooted: boolean } | { error: string }>;
+  isRooted(
+    androidRootedPaths?: string[],
+  ): Promise<{ isRooted: boolean } | { error: string }>;
   // Android only
-  isInstalledFromAllowedStore(): Promise<
-    { isInstalledFromAllowedStore: boolean } | { error: string }
-  >;
+  isInstalledFromAllowedStore(
+    allowedStores?: string[],
+  ): Promise<{ isInstalledFromAllowedStore: boolean } | { error: string }>;
   // Android only
   getApkCertSignature(): Promise<
     { apkCertSignature: string } | { error: string }
@@ -27,14 +31,20 @@ export interface DeviceAuthenticityPlugin {
     expectedApkSignature: string,
   ): Promise<{ apkCertSignatureMatches: boolean } | { error: string }>;
   // Android only
-  checkTags(): Promise<{ hasTags: boolean } | { error: string }>;
-  checkPaths(): Promise<{ hasPaths: boolean } | { error: string }>;
+  checkTags(
+    rootIndicatorTags?: string[],
+  ): Promise<{ hasTags: boolean } | { error: string }>;
+  checkPaths(
+    rootIndicatorPaths?: string[],
+  ): Promise<{ hasPaths: boolean } | { error: string }>;
   // Android only
   checkExecutableFiles(): Promise<
     { hasExecutableFiles: boolean } | { error: string }
   >;
   // iOS only
-  checkPrivateWrite(): Promise<{ canWritePrivate: boolean } | { error: string }>;
+  checkPrivateWrite(): Promise<
+    { canWritePrivate: boolean } | { error: string }
+  >;
   // iOS only
   hasCydia(): Promise<{ hasCydia: boolean } | { error: string }>;
   isValid(value: unknown): value is boolean | string;
