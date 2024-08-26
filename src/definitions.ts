@@ -46,7 +46,7 @@ export interface DeviceAuthenticityPlugin {
     { canWritePrivate: boolean } | { error: string }
   >;
   // iOS only
-  hasCydia(): Promise<{ hasCydia: boolean } | { error: string }>;
+  hasThirdPartyAppStore(): Promise<{ hasThirdPartyAppStore: boolean } | { error: string }>;
   isValid(value: unknown): value is boolean | string;
   isError(value: unknown): value is DeviceAuthenticityError;
 }

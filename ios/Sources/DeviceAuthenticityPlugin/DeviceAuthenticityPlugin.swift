@@ -37,14 +37,14 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         call.resolve(["canWritePrivate": hasPaths])
     }
 
-    @objc func hasCydia(_ call: CAPPluginCall) {
-        let hasCydia = _checkCydia()
+    @objc func hasThirdPartyAppStore(_ call: CAPPluginCall) {
+        let hasThirdPartAppStore = _hasThirdPartAppStore()
         
-        call.resolve(["canWritePrivate": hasCydia])
+        call.resolve(["hasThirdPartAppStore": hasThirdPartAppStore])
     }
     
     private func checkIsJailbroken() -> Bool {
-        return _checkPaths() || _checkPrivateWrite() || _checkCydia() || _checkFork()
+        return _checkPaths() || _checkPrivateWrite() || _hasThirdPartAppStore() || _checkFork()
     }
     
     private func _checkPaths() -> Bool {
@@ -88,9 +88,22 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         }
     }
     
-    private func _checkCydia() -> Bool {
-        if let url = URL(string: "cydia://package/com.example.package") {
-            return UIApplication.shared.canOpenURL(url)
+    private func _hasThirdPartAppStore() -> Bool {
+       let jailbreakSchemes = [
+            "cydia://",
+            "sileo://",
+            "zbra://",
+            "filza://",
+            "undecimus://",
+            "activator://"
+        ]
+        
+        for scheme in jailbreakSchemes {
+            if let url = URL(string: scheme) {
+                if UIApplication.shared.canOpenURL(url) {
+                    return true
+                }
+            }
         }
         return false
     }
