@@ -168,6 +168,27 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
+    @PluginMethod
+    public void isJailbroken(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("error", "Not implemented on Android");
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void checkPrivateWrite(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("error", "Not implemented on Android");
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void hasThirdPartyAppStore(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("error", "Not implemented on Android");
+        call.resolve(ret);
+    }
+
     private String _getApkCertSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
         PackageInfo packageInfo;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
