@@ -4,11 +4,13 @@ import Capacitor
 @objc(DeviceAuthenticityPlugin)
 public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
-        let isJailbroken = _checkIsJailbroken()
+        let allowedPaths = call.getArray("allowedPaths", String.self) ?? []
+        let allowedSchemes = call.getArray("allowedSchemes", String.self) ?? []
+        let isJailbroken = _checkIsJailbroken(allowedPaths, allowedSchemes,allowedSchemes: [String])
         let isEmulator = _isRunningOnSimulator()
         let hasThirdPartyAppStore = _hasThirdPartyAppStore()
         let canWritePrivate = _checkPrivateWrite()
-        let hasPaths = _checkPaths()
+        let hasPaths = _checkPaths(allowedPaths)
         
         call.resolve([
             "isJailbroken": isJailbroken,
@@ -32,7 +34,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
 
     @objc func checkPaths(_ call: CAPPluginCall) {
-        let hasPaths = _checkPaths()
+        let allowedPaths = call.getArray("allowedPaths", String.self) ?? []
+        let hasPaths = _checkPaths(allowedPaths)
         
         call.resolve(["hasPaths": hasPaths])
     }
@@ -49,11 +52,11 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         call.resolve(["hasThirdPartyAppStore": hasThirdPartyAppStore])
     }
     
-    private func _checkIsJailbroken() -> Bool {
-        return _checkPaths() || _checkPrivateWrite() || _hasThirdPartyAppStore() || _checkFork()
+    private func _checkIsJailbroken(allowedPaths: [String] = [],allowedSchemes: [String] = []) -> Bool {
+        return _checkPaths(allowedPaths: allowedPaths) || _checkPrivateWrite() || _hasThirdPartyAppStore(allowedSchemes: allowedSchemes) || _checkFork()
     }
     
-    private func _checkPaths() -> Bool {
+    private func _checkPaths(allowedPaths: [String]) -> Bool {
         let fileManager = FileManager.default
         let jailbreakPaths = [
             "/Applications/Cydia.app",
@@ -74,8 +77,10 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
             "/private/var/jailbreak",
             "/var/mobile/Library/SBSettings/Themes"
         ]
-        
-        for path in jailbreakPaths {
+
+        let pathsToCheck = allowedPaths.count > 0 ? allowedPaths : jailbreakPaths
+
+        for path in pathsToCheck {
             if fileManager.fileExists(atPath: path) {
                 return true
             }
@@ -94,8 +99,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         }
     }
     
-    private func _hasThirdPartyAppStore() -> Bool {
-       let jailbreakSchemes = [
+    private func _hasThirdPartyAppStore(allowedSchemes: [String] = []) -> Bool {
+        let jailbreakSchemes = [
             "cydia://",
             "sileo://",
             "zbra://",
@@ -104,7 +109,9 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
             "activator://"
         ]
         
-        for scheme in jailbreakSchemes {
+        let schemesToCheck = allowedSchemes.count > 0 ? allowedSchemes : jailbreakSchemes
+        
+        for scheme in schemesToCheck {
             if let url = URL(string: scheme) {
                 if UIApplication.shared.canOpenURL(url) {
                     return true

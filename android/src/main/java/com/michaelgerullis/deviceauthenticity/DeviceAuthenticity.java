@@ -41,7 +41,7 @@ public class DeviceAuthenticity extends Plugin {
             "lineage", // LineageOS custom ROM
             "unofficial" // Unofficial build, common in custom ROMs
     };
-    
+
     private static final String[] DEFAULT_ALLOWED_PATHS = new String[] {
             "/system/app/Superuser.apk",
             "/sbin/su",
