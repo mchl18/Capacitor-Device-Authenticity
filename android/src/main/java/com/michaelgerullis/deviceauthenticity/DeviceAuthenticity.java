@@ -76,7 +76,8 @@ public class DeviceAuthenticity extends Plugin {
             JSArray allowedStoresArray = call.getArray("allowedStores");
             List<String> allowedStores = _getAllowedStores(allowedStoresArray);
 
-            ret.put("isRooted", _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
+            ret.put("isRooted",
+                    _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
             ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
             ret.put("apkSignature", parsedApkSignature);
@@ -92,11 +93,12 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void isRooted(PluginCall call) {
         try {
-            JSObject ret = new JSObject();  
+            JSObject ret = new JSObject();
             JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
             JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
             JSArray rootIndicatorFilesArray = call.getArray("rootIndicatorFiles");
-            ret.put("isRooted", _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
+            ret.put("isRooted",
+                    _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device rooted status: " + e.getMessage());
@@ -267,7 +269,8 @@ public class DeviceAuthenticity extends Plugin {
         return result;
     }
 
-    private boolean _checkIsRooted(JSArray rootIndicatorTagsArray, JSArray rootIndicatorPathsArray, JSArray rootIndicatorFilesArray) {
+    private boolean _checkIsRooted(JSArray rootIndicatorTagsArray, JSArray rootIndicatorPathsArray,
+            JSArray rootIndicatorFilesArray) {
         return _checkTags(rootIndicatorTagsArray)
                 || _checkPaths(rootIndicatorPathsArray)
                 || _checkExecutableFiles(rootIndicatorFilesArray);
@@ -275,14 +278,16 @@ public class DeviceAuthenticity extends Plugin {
 
     private boolean _checkTags(JSArray rootIndicatorTagsArray) {
         String buildTags = android.os.Build.TAGS;
-        if (buildTags == null)
+        String[] tagsToCheck;
+        Integer rootIndicatorTagsArrayLength = rootIndicatorTagsArray.length();
+        
+        if (buildTags == null || buildTags.isEmpty())
             return false;
 
-        String[] tagsToCheck;
 
-        if (rootIndicatorTagsArray != null && rootIndicatorTagsArray.length() > 0) {
-            tagsToCheck = new String[rootIndicatorTagsArray.length()];
-            for (int i = 0; i < rootIndicatorTagsArray.length(); i++) {
+        if (rootIndicatorTagsArrayLength > 0) {
+            tagsToCheck = new String[rootIndicatorTagsArrayLength];
+            for (int i = 0; i < rootIndicatorTagsArrayLength; i++) {
                 tagsToCheck[i] = rootIndicatorTagsArray.getString(i);
             }
         } else {
@@ -300,9 +305,11 @@ public class DeviceAuthenticity extends Plugin {
 
     private boolean _checkPaths(JSArray rootIndicatorPathsArray) {
         String[] paths;
-        if (rootIndicatorPathsArray != null && rootIndicatorPathsArray.length() > 0) {
-            paths = new String[rootIndicatorPathsArray.length()];
-            for (int i = 0; i < rootIndicatorPathsArray.length(); i++) {
+        Integer rootIndicatorPathsArrayLength = rootIndicatorPathsArray.length();   
+
+        if (rootIndicatorPathsArrayLength > 0) {
+            paths = new String[rootIndicatorPathsArrayLength];
+            for (int i = 0; i < rootIndicatorPathsArrayLength; i++) {
                 paths[i] = rootIndicatorPathsArray.getString(i);
             }
         } else {
@@ -317,9 +324,11 @@ public class DeviceAuthenticity extends Plugin {
 
     private boolean _checkExecutableFiles(JSArray rootIndicatorFilesArray) {
         ArrayList<String> executableFiles;
-        if (rootIndicatorFilesArray != null && rootIndicatorFilesArray.length() > 0) {
+        Integer rootIndicatorFilesArrayLength = rootIndicatorFilesArray.length();
+
+        if (rootIndicatorFilesArrayLength > 0) {
             executableFiles = new ArrayList<>();
-            for (int i = 0; i < rootIndicatorFilesArray.length(); i++) {
+            for (int i = 0; i < rootIndicatorFilesArrayLength; i++) {
                 executableFiles.add(rootIndicatorFilesArray.getString(i));
             }
         } else {
@@ -383,8 +392,10 @@ public class DeviceAuthenticity extends Plugin {
 
     private List<String> _getAllowedStores(JSArray allowedStoresArray) {
         List<String> allowedStores = new ArrayList<>();
-        if (allowedStoresArray != null && allowedStoresArray.length() > 0) {
-            for (int i = 0; i < allowedStoresArray.length(); i++) {
+        Integer allowedStoresArrayLength = allowedStoresArray.length();
+
+        if (allowedStoresArrayLength > 0) {
+            for (int i = 0; i < allowedStoresArrayLength; i++) {
                 allowedStores.add(allowedStoresArray.getString(i));
             }
         } else {
