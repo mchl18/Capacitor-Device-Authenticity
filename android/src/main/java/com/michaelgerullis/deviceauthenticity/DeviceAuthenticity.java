@@ -35,12 +35,11 @@ public class DeviceAuthenticity extends Plugin {
             String expectedApkSignature = call.getString("apkSignature");
             String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
             JSObject ret = new JSObject();
-            ret.put("isRooted", _checkIsRooted());
-            ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
+            JSArray allowedTagsArray = call.getArray("allowedTags");
+            JSArray allowedPathsArray = call.getArray("allowedPaths");
+            JSArray allowedFilesArray = call.getArray("allowedFiles");
             String apkSignature = _getApkCertSignature();
-            ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
             String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
-            ret.put("apkSignature", parsedApkSignature);
 
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
@@ -53,7 +52,13 @@ public class DeviceAuthenticity extends Plugin {
                 allowedStores.add(DEFAULT_ALLOWED_STORE);
             }
 
+            ret.put("isRooted", _checkIsRooted(allowedTagsArray, allowedPathsArray, allowedFilesArray));
+            ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
+            ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
+            ret.put("apkSignature", parsedApkSignature);
+            ret.put("hasPaths", _checkPaths(allowedPathsArray));
             ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
+
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device authenticity: " + e.getMessage());
@@ -119,7 +124,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkApkCertSignature(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            ret.put("apkCertSignatureMatches", _checkApkCertSignature(call.getString("expectedApkSignature")));
+            String expectedApkSignature = call.getString("expectedApkSignature");
+            ret.put("apkCertSignatureMatches", _checkApkCertSignature(expectedApkSignature));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking APK certificate signature: " + e.getMessage());
@@ -130,7 +136,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkTags(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            ret.put("hasTags", _checkTag());
+            JSArray allowedTagsArray = call.getArray("allowedTags");
+            ret.put("hasTags", _checkTags(allowedTagsArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build tags: " + e.getMessage());
@@ -141,7 +148,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkPaths(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            ret.put("hasPaths", _checkPaths());
+            JSArray allowedPathsArray = call.getArray("allowedPaths");
+            ret.put("hasPaths", _checkPaths(allowedPathsArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build paths: " + e.getMessage());
@@ -152,7 +160,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkExecutableFiles(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            ret.put("hasExecutableFiles", _checkExecutableFiles());
+            JSArray allowedFilesArray = call.getArray("allowedFiles");
+            ret.put("hasExecutableFiles", _checkExecutableFiles(allowedFilesArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking executable files: " + e.getMessage());
@@ -215,6 +224,7 @@ public class DeviceAuthenticity extends Plugin {
         return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
+    // @TODO: add ability to pass extra emulator checks
     private boolean _isEmulator() {
         return Build.FINGERPRINT.startsWith("generic")
                 || Build.FINGERPRINT.startsWith("unknown")
@@ -224,8 +234,10 @@ public class DeviceAuthenticity extends Plugin {
                 || Build.MANUFACTURER.contains("Genymotion")
                 || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
                 || "google_sdk".equals(Build.PRODUCT);
+
     }
 
+    // @TODO: add ability to pass extra emulator checks
     private boolean _isRunningInEmulator() {
         boolean result = false;
         try {
@@ -240,30 +252,41 @@ public class DeviceAuthenticity extends Plugin {
         return result;
     }
 
-    private boolean _checkIsRooted() {
-        return _checkTag() || _checkPaths() || _checkExecutableFiles();
+    private boolean _checkIsRooted(JSArray allowedTagsArray, JSArray allowedPathsArray, JSArray allowedFilesArray) {
+        return _checkTags(allowedTagsArray)
+                || _checkPaths(allowedPathsArray)
+                || _checkExecutableFiles(allowedFilesArray);
     }
 
-    private boolean _checkTag() {
+    private boolean _checkTags(JSArray allowedTagsArray) {
         String buildTags = android.os.Build.TAGS;
         if (buildTags == null)
             return false;
 
-        String[] rootIndicatorTags = {
-                "test-keys", // Common for many rooted devices
-                "dev-keys", // Development keys, often seen in custom ROMs
-                "userdebug", // User-debuggable build, common in rooted devices
-                "engineering", // Engineering build, may indicate a modified system
-                "release-keys-debug", // Debug version of release keys
-                "custom", // Explicitly marked as custom
-                "rooted", // Explicitly marked as rooted (rare, but possible)
-                "supersu", // Indicates SuperSU rooting tool
-                "magisk", // Indicates Magisk rooting framework
-                "lineage", // LineageOS custom ROM
-                "unofficial" // Unofficial build, common in custom ROMs
-        };
+        String[] tagsToCheck;
 
-        for (String tag : rootIndicatorTags) {
+        if (allowedTagsArray != null && allowedTagsArray.length() > 0) {
+            tagsToCheck = new String[allowedTagsArray.length()];
+            for (int i = 0; i < allowedTagsArray.length(); i++) {
+                tagsToCheck[i] = allowedTagsArray.getString(i);
+            }
+        } else {
+            tagsToCheck = new String[] {
+                    "test-keys", // Common for many rooted devices
+                    "dev-keys", // Development keys, often seen in custom ROMs
+                    "userdebug", // User-debuggable build, common in rooted devices
+                    "engineering", // Engineering build, may indicate a modified system
+                    "release-keys-debug", // Debug version of release keys
+                    "custom", // Explicitly marked as custom
+                    "rooted", // Explicitly marked as rooted (rare, but possible)
+                    "supersu", // Indicates SuperSU rooting tool
+                    "magisk", // Indicates Magisk rooting framework
+                    "lineage", // LineageOS custom ROM
+                    "unofficial" // Unofficial build, common in custom ROMs
+            };
+        }
+
+        for (String tag : tagsToCheck) {
             if (buildTags.toLowerCase().contains(tag.toLowerCase())) {
                 return true;
             }
@@ -272,19 +295,27 @@ public class DeviceAuthenticity extends Plugin {
         return false;
     }
 
-    private boolean _checkPaths() {
-        String[] paths = {
-                "/system/app/Superuser.apk",
-                "/sbin/su",
-                "/system/bin/su",
-                "/system/xbin/su",
-                "/data/local/xbin/su",
-                "/data/local/bin/su",
-                "/system/sd/xbin/su",
-                "/system/bin/failsafe/su",
-                "/data/local/su",
-                "/su/bin/su"
-        };
+    private boolean _checkPaths(JSArray allowedPathsArray) {
+        String[] paths;
+        if (allowedPathsArray != null && allowedPathsArray.length() > 0) {
+            paths = new String[allowedPathsArray.length()];
+            for (int i = 0; i < allowedPathsArray.length(); i++) {
+                paths[i] = allowedPathsArray.getString(i);
+            }
+        } else {
+            paths = new String[] {
+                    "/system/app/Superuser.apk",
+                    "/sbin/su",
+                    "/system/bin/su",
+                    "/system/xbin/su",
+                    "/data/local/xbin/su",
+                    "/data/local/bin/su",
+                    "/system/sd/xbin/su",
+                    "/system/bin/failsafe/su",
+                    "/data/local/su",
+                    "/su/bin/su"
+            };
+        }
         for (String path : paths) {
             if (new File(path).exists())
                 return true;
@@ -292,12 +323,20 @@ public class DeviceAuthenticity extends Plugin {
         return false;
     }
 
-    private boolean _checkExecutableFiles() {
-        ArrayList<String> executableFiles = new ArrayList<>(Arrays.asList(
-                "su",
-                "/system/xbin/su",
-                "/system/bin/su",
-                "busybox"));
+    private boolean _checkExecutableFiles(JSArray allowedFilesArray) {
+        ArrayList<String> executableFiles;
+        if (allowedFilesArray != null && allowedFilesArray.length() > 0) {
+            executableFiles = new ArrayList<>();
+            for (int i = 0; i < allowedFilesArray.length(); i++) {
+                executableFiles.add(allowedFilesArray.getString(i));
+            }
+        } else {
+            executableFiles = new ArrayList<>(Arrays.asList(
+                    "su",
+                    "/system/xbin/su",
+                    "/system/bin/su",
+                    "busybox"));
+        }
 
         ArrayList<String> commands = new ArrayList<>(Arrays.asList(
                 "which",
