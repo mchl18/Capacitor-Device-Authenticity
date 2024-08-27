@@ -55,7 +55,7 @@ public class DeviceAuthenticity extends Plugin {
             "/su/bin/su"
     };
 
-    private static final String[] DEFAULT_FORBIDDEN_FILES = new String[] {
+    private static final String[] DEFAULT_FORBIDDEN_EXECUTABLES = new String[] {
             "su",
             "/system/xbin/su",
             "/system/bin/su",
@@ -332,7 +332,7 @@ public class DeviceAuthenticity extends Plugin {
                 executableFiles.add(rootIndicatorFilesArray.getString(i));
             }
         } else {
-            executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_FORBIDDEN_FILES));
+            executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_FORBIDDEN_EXECUTABLES));
         }
 
         ArrayList<String> commands = new ArrayList<>(Arrays.asList(
