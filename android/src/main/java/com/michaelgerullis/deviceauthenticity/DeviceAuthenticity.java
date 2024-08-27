@@ -28,29 +28,53 @@ import android.util.Base64;
 public class DeviceAuthenticity extends Plugin {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
+    private static final String[] DEFAULT_ALLOWED_TAGS = new String[] {
+            "test-keys", // Common for many rooted devices
+            "dev-keys", // Development keys, often seen in custom ROMs
+            "userdebug", // User-debuggable build, common in rooted devices
+            "engineering", // Engineering build, may indicate a modified system
+            "release-keys-debug", // Debug version of release keys
+            "custom", // Explicitly marked as custom
+            "rooted", // Explicitly marked as rooted (rare, but possible)
+            "supersu", // Indicates SuperSU rooting tool
+            "magisk", // Indicates Magisk rooting framework
+            "lineage", // LineageOS custom ROM
+            "unofficial" // Unofficial build, common in custom ROMs
+    };
+    
+    private static final String[] DEFAULT_ALLOWED_PATHS = new String[] {
+            "/system/app/Superuser.apk",
+            "/sbin/su",
+            "/system/bin/su",
+            "/system/xbin/su",
+            "/data/local/xbin/su",
+            "/data/local/bin/su",
+            "/system/sd/xbin/su",
+            "/system/bin/failsafe/su",
+            "/data/local/su",
+            "/su/bin/su"
+    };
+
+    private static final String[] DEFAULT_ALLOWED_FILES = new String[] {
+            "su",
+            "/system/xbin/su",
+            "/system/bin/su",
+            "busybox"
+    };
 
     @PluginMethod
     public void checkAuthenticity(PluginCall call) {
         try {
             String expectedApkSignature = call.getString("apkSignature");
-            String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
             JSObject ret = new JSObject();
             JSArray allowedTagsArray = call.getArray("allowedTags");
             JSArray allowedPathsArray = call.getArray("allowedPaths");
             JSArray allowedFilesArray = call.getArray("allowedFiles");
             String apkSignature = _getApkCertSignature();
-            String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
 
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
-            List<String> allowedStores = new ArrayList<>();
-            if (allowedStoresArray != null && allowedStoresArray.length() > 0) {
-                for (int i = 0; i < allowedStoresArray.length(); i++) {
-                    allowedStores.add(allowedStoresArray.getString(i));
-                }
-            } else {
-                allowedStores.add(DEFAULT_ALLOWED_STORE);
-            }
+            List<String> allowedStores = _getAllowedStores(allowedStoresArray);
 
             ret.put("isRooted", _checkIsRooted(allowedTagsArray, allowedPathsArray, allowedFilesArray));
             ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
@@ -92,14 +116,7 @@ public class DeviceAuthenticity extends Plugin {
         try {
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
-            List<String> allowedStores = new ArrayList<>();
-            if (allowedStoresArray != null && allowedStoresArray.length() > 0) {
-                for (int i = 0; i < allowedStoresArray.length(); i++) {
-                    allowedStores.add(allowedStoresArray.getString(i));
-                }
-            } else {
-                allowedStores.add(DEFAULT_ALLOWED_STORE);
-            }
+            List<String> allowedStores = _getAllowedStores(allowedStoresArray);
             JSObject ret = new JSObject();
             ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
             call.resolve(ret);
@@ -204,17 +221,12 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    private String _checkApkCertSignature(String expectedApkSignature) {
-        try {
-            String apkSignature = _getApkCertSignature();
-            String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
-            String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
-            boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
-            return String.valueOf(isValid);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "false";
-        }
+    private Boolean _checkApkCertSignature(String expectedApkSignature) {
+        String apkSignature = _getApkCertSignature();
+        String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
+        String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
+        boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
+        return isValid;
     }
 
     private String _calculateSignature(Signature sig) throws NoSuchAlgorithmException {
@@ -271,19 +283,7 @@ public class DeviceAuthenticity extends Plugin {
                 tagsToCheck[i] = allowedTagsArray.getString(i);
             }
         } else {
-            tagsToCheck = new String[] {
-                    "test-keys", // Common for many rooted devices
-                    "dev-keys", // Development keys, often seen in custom ROMs
-                    "userdebug", // User-debuggable build, common in rooted devices
-                    "engineering", // Engineering build, may indicate a modified system
-                    "release-keys-debug", // Debug version of release keys
-                    "custom", // Explicitly marked as custom
-                    "rooted", // Explicitly marked as rooted (rare, but possible)
-                    "supersu", // Indicates SuperSU rooting tool
-                    "magisk", // Indicates Magisk rooting framework
-                    "lineage", // LineageOS custom ROM
-                    "unofficial" // Unofficial build, common in custom ROMs
-            };
+            tagsToCheck = DEFAULT_ALLOWED_TAGS;
         }
 
         for (String tag : tagsToCheck) {
@@ -303,18 +303,7 @@ public class DeviceAuthenticity extends Plugin {
                 paths[i] = allowedPathsArray.getString(i);
             }
         } else {
-            paths = new String[] {
-                    "/system/app/Superuser.apk",
-                    "/sbin/su",
-                    "/system/bin/su",
-                    "/system/xbin/su",
-                    "/data/local/xbin/su",
-                    "/data/local/bin/su",
-                    "/system/sd/xbin/su",
-                    "/system/bin/failsafe/su",
-                    "/data/local/su",
-                    "/su/bin/su"
-            };
+            paths = DEFAULT_ALLOWED_PATHS;
         }
         for (String path : paths) {
             if (new File(path).exists())
@@ -331,11 +320,7 @@ public class DeviceAuthenticity extends Plugin {
                 executableFiles.add(allowedFilesArray.getString(i));
             }
         } else {
-            executableFiles = new ArrayList<>(Arrays.asList(
-                    "su",
-                    "/system/xbin/su",
-                    "/system/bin/su",
-                    "busybox"));
+            executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_ALLOWED_FILES));
         }
 
         ArrayList<String> commands = new ArrayList<>(Arrays.asList(
@@ -391,5 +376,17 @@ public class DeviceAuthenticity extends Plugin {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private List<String> _getAllowedStores(JSArray allowedStoresArray) {
+        List<String> allowedStores = new ArrayList<>();
+        if (allowedStoresArray != null && allowedStoresArray.length() > 0) {
+            for (int i = 0; i < allowedStoresArray.length(); i++) {
+                allowedStores.add(allowedStoresArray.getString(i));
+            }
+        } else {
+            allowedStores.add(DEFAULT_ALLOWED_STORE);
+        }
+        return allowedStores;
     }
 }
