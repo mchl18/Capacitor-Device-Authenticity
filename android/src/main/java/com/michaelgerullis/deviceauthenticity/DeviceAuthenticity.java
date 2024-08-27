@@ -80,7 +80,7 @@ public class DeviceAuthenticity extends Plugin {
                     _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
             ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
-            ret.put("apkSignature", parsedApkSignature);
+            ret.put("apkSignature", apkSignature);
             ret.put("hasPaths", _checkPaths(rootIndicatorPathsArray));
             ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
 
@@ -238,7 +238,8 @@ public class DeviceAuthenticity extends Plugin {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(sig.toByteArray());
         byte[] digest = md.digest();
-        return Base64.encodeToString(digest, Base64.DEFAULT);
+        String signature = Base64.encodeToString(digest, Base64.DEFAULT);
+        return signature.replace(":", "").toLowerCase();
     }
 
     // @TODO: add ability to pass extra emulator checks
