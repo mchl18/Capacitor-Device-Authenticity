@@ -2,6 +2,13 @@ import {
   DeviceAuthenticityError,
   DeviceAuthenticityOptions,
   DeviceAuthenticityResult,
+  DeviceAuthenticityJailbreakOptions,
+  DeviceAuthenticityRootedOptions,
+  DeviceAuthenticityInstalledFromAllowedStoreOptions,
+  DeviceAuthenticityCheckApkCertSignatureOptions,
+  DeviceAuthenticityCheckTagsOptions,
+  DeviceAuthenticityCheckPathsOptions,
+  DeviceAuthenticityCheckExecutableFilesOptions,
 } from './types';
 
 export interface DeviceAuthenticityPlugin {
@@ -11,53 +18,36 @@ export interface DeviceAuthenticityPlugin {
 
   isEmulator(): Promise<{ isEmulator: boolean } | { error: string }>;
   // iOS only
-  isJailbroken({
-    jailbreakIndicatorPaths,
-    forbiddenSchemes,
-  }: {
-    jailbreakIndicatorPaths?: string[];
-    forbiddenSchemes?: string[];
-  }): Promise<{ isJailbroken: boolean } | { error: string }>;
+  isJailbroken(
+    options?: DeviceAuthenticityJailbreakOptions,
+  ): Promise<{ isJailbroken: boolean } | { error: string }>;
   // Android only
-  isRooted({
-    rootIndicatorPaths,
-    rootIndicatorTags,
-  }: {
-    rootIndicatorPaths?: string[];
-    rootIndicatorTags?: string[];
-    rootIndicatorFiles?: string[];
-  }): Promise<{ isRooted: boolean } | { error: string }>;
+  isRooted(
+    options?: DeviceAuthenticityRootedOptions,
+  ): Promise<{ isRooted: boolean } | { error: string }>;
   // Android only
-  isInstalledFromAllowedStore({
-    allowedStores,
-  }: {
-    allowedStores: string[];
-  }): Promise<{ isInstalledFromAllowedStore: boolean } | { error: string }>;
+  isInstalledFromAllowedStore(
+    options?: DeviceAuthenticityInstalledFromAllowedStoreOptions,
+  ): Promise<{ isInstalledFromAllowedStore: boolean } | { error: string }>;
   // Android only
   getApkCertSignature(): Promise<
     { apkCertSignature: string } | { error: string }
   >;
   // Android only
-  checkApkCertSignature({
-    expectedApkSignature,
-  }: {
-    expectedApkSignature: string;
-  }): Promise<{ apkCertSignatureMatches: boolean } | { error: string }>;
+  checkApkCertSignature(
+    options?: DeviceAuthenticityCheckApkCertSignatureOptions,
+  ): Promise<{ apkCertSignatureMatches: boolean } | { error: string }>;
   // Android only
-  checkTags({
-    rootIndicatorTags,
-  }: {
-    rootIndicatorTags: string[];
-  }): Promise<{ hasTags: boolean } | { error: string }>;
-  checkPaths({
-    jailbreakIndicatorPaths,
-  }: {
-    jailbreakIndicatorPaths: string[];
-  }): Promise<{ hasPaths: boolean } | { error: string }>;
+  checkTags(
+    options?: DeviceAuthenticityCheckTagsOptions,
+  ): Promise<{ hasTags: boolean } | { error: string }>;
+  checkPaths(
+    options?: DeviceAuthenticityCheckPathsOptions,
+  ): Promise<{ hasPaths: boolean } | { error: string }>;
   // Android only
-  checkExecutableFiles(): Promise<
-    { hasExecutableFiles: boolean } | { error: string }
-  >;
+  checkExecutableFiles(
+    options?: DeviceAuthenticityCheckExecutableFilesOptions,
+  ): Promise<{ hasExecutableFiles: boolean } | { error: string }>;
   // iOS only
   checkPrivateWrite(): Promise<
     { canWritePrivate: boolean } | { error: string }

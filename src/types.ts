@@ -53,7 +53,16 @@ export type DeviceAuthenticityOptions = {
   // If you are planning to extend the list, please do as follow:
   // const completeList = [...DeviceAuthenticityWeb.DEFAULT_IOS_JAILBREAK_PATHS, ...yourList];
   // Then use completeList in the plugin. Otherwise, the default list will be used.
-  iosJailbreakPaths?: string[];
+  jailbreakIndicatorPaths?: string[];
+  // iOS only
+  // Override for the default forbidden schemes which are:
+  // "cydia://",
+  // "sileo://",
+  // "zbra://",
+  // "filza://",
+  // "undecimus://",
+  // "activator://"
+  forbiddenSchemes?: string[];
   // Android only
   // Override for the default rooted paths which are:
   // "/system/app/Superuser.apk",
@@ -74,4 +83,35 @@ export type DeviceAuthenticityOptions = {
 
 export type DeviceAuthenticityError = {
   error: string;
+};
+
+export type DeviceAuthenticityJailbreakOptions = {
+  jailbreakIndicatorPaths?: string[];
+  forbiddenSchemes?: string[];
+};
+
+export type DeviceAuthenticityRootedOptions = {
+  rootIndicatorPaths?: string[];
+  rootIndicatorTags?: string[];
+  rootIndicatorFiles?: string[];
+};
+
+export type DeviceAuthenticityInstalledFromAllowedStoreOptions = {
+  allowedStores?: string[];
+};
+
+export type DeviceAuthenticityCheckApkCertSignatureOptions = {
+  expectedApkSignature: string;
+};
+
+export type DeviceAuthenticityCheckTagsOptions = {
+  rootIndicatorTags: string[];
+};
+
+export type DeviceAuthenticityCheckPathsOptions = {
+  jailbreakIndicatorPaths: string[];
+};
+
+export type DeviceAuthenticityCheckExecutableFilesOptions = {
+  rootIndicatorFiles: string[];
 };
