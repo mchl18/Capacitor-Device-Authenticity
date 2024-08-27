@@ -68,14 +68,14 @@ export type DeviceAuthenticityOptions = {
   // Then use completeList in the plugin. Otherwise, the default list will be used.
   jailbreakIndicatorPaths?: string[];
   // iOS only
-  // Override for the default forbidden schemes which are:
+  // Override for the default forbidden schemas which are:
   // "cydia://",
   // "sileo://",
   // "zbra://",
   // "filza://",
   // "undecimus://",
   // "activator://"
-  forbiddenSchemes?: string[];
+  forbiddenSchemas?: string[];
   // Android only
   // Override for the default rooted paths which are:
   // "/system/app/Superuser.apk",
@@ -100,7 +100,7 @@ export type DeviceAuthenticityError = {
 
 export type DeviceAuthenticityJailbreakOptions = {
   jailbreakIndicatorPaths?: string[];
-  forbiddenSchemes?: string[];
+  forbiddenSchemas?: string[];
 };
 
 export type DeviceAuthenticityRootedOptions = {

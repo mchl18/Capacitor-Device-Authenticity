@@ -5,8 +5,8 @@ import Capacitor
 public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
-        let forbiddenSchemes = call.getArray("forbiddenSchemes", String.self) ?? []
-        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths, forbiddenSchemes: forbiddenSchemes)
+        let forbiddenSchemas = call.getArray("forbiddenSchemas", String.self) ?? []
+        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths, forbiddenSchemas: forbiddenSchemas)
         let isEmulator = _isRunningOnSimulator()
         let hasThirdPartyAppStore = _hasThirdPartyAppStore()
         let canWritePrivate = _checkPrivateWrite()
@@ -73,8 +73,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         call.resolve(["error": "Not implemented on iOS"])
     }
     
-    private func _checkIsJailbroken(jailbreakIndicatorPaths: [String] = [],forbiddenSchemes: [String] = []) -> Bool {
-        return _checkPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths) || _checkPrivateWrite() || _hasThirdPartyAppStore(forbiddenSchemes: forbiddenSchemes) || _checkFork()
+    private func _checkIsJailbroken(jailbreakIndicatorPaths: [String] = [],forbiddenSchemas: [String] = []) -> Bool {
+        return _checkPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths) || _checkPrivateWrite() || _hasThirdPartyAppStore(forbiddenSchemas: forbiddenSchemas) || _checkFork()
     }
     
     private func _checkPaths(jailbreakIndicatorPaths: [String]) -> Bool {
@@ -120,8 +120,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         }
     }
     
-    private func _hasThirdPartyAppStore(forbiddenSchemes: [String] = []) -> Bool {
-        let jailbreakSchemes = [
+    private func _hasThirdPartyAppStore(forbiddenSchemas: [String] = []) -> Bool {
+        let jailbreakSchemas = [
             "cydia://",
             "sileo://",
             "zbra://",
@@ -130,9 +130,9 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
             "activator://"
         ]
         
-        let schemesToCheck = forbiddenSchemes.count > 0 ? forbiddenSchemes : jailbreakSchemes
+        let schemasToCheck = forbiddenSchemas.count > 0 ? forbiddenSchemas : jailbreakSchemas
         
-        for scheme in schemesToCheck {
+        for scheme in schemasToCheck {
             if let url = URL(string: scheme) {
                 if UIApplication.shared.canOpenURL(url) {
                     return true
