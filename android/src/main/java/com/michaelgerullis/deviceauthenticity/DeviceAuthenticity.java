@@ -67,20 +67,20 @@ public class DeviceAuthenticity extends Plugin {
         try {
             String expectedApkSignature = call.getString("apkSignature");
             JSObject ret = new JSObject();
-            JSArray allowedTagsArray = call.getArray("allowedTags");
-            JSArray allowedPathsArray = call.getArray("allowedPaths");
-            JSArray allowedFilesArray = call.getArray("allowedFiles");
+            JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
+            JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
+            JSArray rootIndicatorFilesArray = call.getArray("rootIndicatorFiles");
             String apkSignature = _getApkCertSignature();
 
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
             List<String> allowedStores = _getAllowedStores(allowedStoresArray);
 
-            ret.put("isRooted", _checkIsRooted(allowedTagsArray, allowedPathsArray, allowedFilesArray));
+            ret.put("isRooted", _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
             ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
             ret.put("apkSignature", parsedApkSignature);
-            ret.put("hasPaths", _checkPaths(allowedPathsArray));
+            ret.put("hasPaths", _checkPaths(rootIndicatorPathsArray));
             ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
 
             call.resolve(ret);
@@ -92,8 +92,11 @@ public class DeviceAuthenticity extends Plugin {
     @PluginMethod
     public void isRooted(PluginCall call) {
         try {
-            JSObject ret = new JSObject();
-            ret.put("isRooted", _checkIsRooted());
+            JSObject ret = new JSObject();  
+            JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
+            JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
+            JSArray rootIndicatorFilesArray = call.getArray("rootIndicatorFiles");
+            ret.put("isRooted", _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device rooted status: " + e.getMessage());
@@ -153,8 +156,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkTags(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            JSArray allowedTagsArray = call.getArray("allowedTags");
-            ret.put("hasTags", _checkTags(allowedTagsArray));
+            JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
+            ret.put("hasTags", _checkTags(rootIndicatorTagsArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build tags: " + e.getMessage());
@@ -165,8 +168,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkPaths(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            JSArray allowedPathsArray = call.getArray("allowedPaths");
-            ret.put("hasPaths", _checkPaths(allowedPathsArray));
+            JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
+            ret.put("hasPaths", _checkPaths(rootIndicatorPathsArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build paths: " + e.getMessage());
@@ -177,8 +180,8 @@ public class DeviceAuthenticity extends Plugin {
     public void checkExecutableFiles(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            JSArray allowedFilesArray = call.getArray("allowedFiles");
-            ret.put("hasExecutableFiles", _checkExecutableFiles(allowedFilesArray));
+            JSArray rootIndicatorFilesArray = call.getArray("rootIndicatorFiles");
+            ret.put("hasExecutableFiles", _checkExecutableFiles(rootIndicatorFilesArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking executable files: " + e.getMessage());
@@ -264,23 +267,23 @@ public class DeviceAuthenticity extends Plugin {
         return result;
     }
 
-    private boolean _checkIsRooted(JSArray allowedTagsArray, JSArray allowedPathsArray, JSArray allowedFilesArray) {
-        return _checkTags(allowedTagsArray)
-                || _checkPaths(allowedPathsArray)
-                || _checkExecutableFiles(allowedFilesArray);
+    private boolean _checkIsRooted(JSArray rootIndicatorTagsArray, JSArray rootIndicatorPathsArray, JSArray rootIndicatorFilesArray) {
+        return _checkTags(rootIndicatorTagsArray)
+                || _checkPaths(rootIndicatorPathsArray)
+                || _checkExecutableFiles(rootIndicatorFilesArray);
     }
 
-    private boolean _checkTags(JSArray allowedTagsArray) {
+    private boolean _checkTags(JSArray rootIndicatorTagsArray) {
         String buildTags = android.os.Build.TAGS;
         if (buildTags == null)
             return false;
 
         String[] tagsToCheck;
 
-        if (allowedTagsArray != null && allowedTagsArray.length() > 0) {
-            tagsToCheck = new String[allowedTagsArray.length()];
-            for (int i = 0; i < allowedTagsArray.length(); i++) {
-                tagsToCheck[i] = allowedTagsArray.getString(i);
+        if (rootIndicatorTagsArray != null && rootIndicatorTagsArray.length() > 0) {
+            tagsToCheck = new String[rootIndicatorTagsArray.length()];
+            for (int i = 0; i < rootIndicatorTagsArray.length(); i++) {
+                tagsToCheck[i] = rootIndicatorTagsArray.getString(i);
             }
         } else {
             tagsToCheck = DEFAULT_ALLOWED_TAGS;
@@ -295,12 +298,12 @@ public class DeviceAuthenticity extends Plugin {
         return false;
     }
 
-    private boolean _checkPaths(JSArray allowedPathsArray) {
+    private boolean _checkPaths(JSArray rootIndicatorPathsArray) {
         String[] paths;
-        if (allowedPathsArray != null && allowedPathsArray.length() > 0) {
-            paths = new String[allowedPathsArray.length()];
-            for (int i = 0; i < allowedPathsArray.length(); i++) {
-                paths[i] = allowedPathsArray.getString(i);
+        if (rootIndicatorPathsArray != null && rootIndicatorPathsArray.length() > 0) {
+            paths = new String[rootIndicatorPathsArray.length()];
+            for (int i = 0; i < rootIndicatorPathsArray.length(); i++) {
+                paths[i] = rootIndicatorPathsArray.getString(i);
             }
         } else {
             paths = DEFAULT_ALLOWED_PATHS;
@@ -312,12 +315,12 @@ public class DeviceAuthenticity extends Plugin {
         return false;
     }
 
-    private boolean _checkExecutableFiles(JSArray allowedFilesArray) {
+    private boolean _checkExecutableFiles(JSArray rootIndicatorFilesArray) {
         ArrayList<String> executableFiles;
-        if (allowedFilesArray != null && allowedFilesArray.length() > 0) {
+        if (rootIndicatorFilesArray != null && rootIndicatorFilesArray.length() > 0) {
             executableFiles = new ArrayList<>();
-            for (int i = 0; i < allowedFilesArray.length(); i++) {
-                executableFiles.add(allowedFilesArray.getString(i));
+            for (int i = 0; i < rootIndicatorFilesArray.length(); i++) {
+                executableFiles.add(rootIndicatorFilesArray.getString(i));
             }
         } else {
             executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_ALLOWED_FILES));

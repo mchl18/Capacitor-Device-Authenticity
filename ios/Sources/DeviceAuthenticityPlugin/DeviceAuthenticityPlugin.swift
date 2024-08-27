@@ -4,13 +4,13 @@ import Capacitor
 @objc(DeviceAuthenticityPlugin)
 public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
-        let allowedPaths = call.getArray("allowedPaths", String.self) ?? []
-        let allowedSchemes = call.getArray("allowedSchemes", String.self) ?? []
-        let isJailbroken = _checkIsJailbroken(allowedPaths, allowedSchemes,allowedSchemes: [String])
+        let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
+        let forbiddenSchemes = call.getArray("forbiddenSchemes", String.self) ?? []
+        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths, forbiddenSchemes)
         let isEmulator = _isRunningOnSimulator()
         let hasThirdPartyAppStore = _hasThirdPartyAppStore()
         let canWritePrivate = _checkPrivateWrite()
-        let hasPaths = _checkPaths(allowedPaths)
+        let hasPaths = _checkPaths(jailbreakIndicatorPaths)
         
         call.resolve([
             "isJailbroken": isJailbroken,
@@ -28,14 +28,15 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
 
     @objc func isJailbroken(_ call: CAPPluginCall) {
-        let isJailbroken = _checkIsJailbroken()
+        let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
+        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths)
         
         call.resolve(["isJailbroken": isJailbroken])
     }
 
     @objc func checkPaths(_ call: CAPPluginCall) {
-        let allowedPaths = call.getArray("allowedPaths", String.self) ?? []
-        let hasPaths = _checkPaths(allowedPaths)
+        let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
+        let hasPaths = _checkPaths(jailbreakIndicatorPaths)
         
         call.resolve(["hasPaths": hasPaths])
     }
@@ -51,12 +52,32 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         
         call.resolve(["hasThirdPartyAppStore": hasThirdPartyAppStore])
     }
-    
-    private func _checkIsJailbroken(allowedPaths: [String] = [],allowedSchemes: [String] = []) -> Bool {
-        return _checkPaths(allowedPaths: allowedPaths) || _checkPrivateWrite() || _hasThirdPartyAppStore(allowedSchemes: allowedSchemes) || _checkFork()
+
+    @objc func isRooted(_ call: CAPPluginCall) {
+        call.resolve(["error": "Not implemented on iOS"])
+    }
+
+    @objc func isInstalledFromAllowedStore(_ call: CAPPluginCall) {
+        call.resolve(["error": "Not implemented on iOS"])
+    }
+
+    @objc func getApkCertSignature(_ call: CAPPluginCall) {
+        call.resolve(["error": "Not implemented on iOS"])
+    }
+
+    @objc func checkApkCertSignature(_ call: CAPPluginCall) {
+        call.resolve(["error": "Not implemented on iOS"])
+    }
+
+    @objc func checkTags(_ call: CAPPluginCall) {
+        call.resolve(["error": "Not implemented on iOS"])
     }
     
-    private func _checkPaths(allowedPaths: [String]) -> Bool {
+    private func _checkIsJailbroken(jailbreakIndicatorPaths: [String] = [],forbiddenSchemes: [String] = []) -> Bool {
+        return _checkPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths) || _checkPrivateWrite() || _hasThirdPartyAppStore(forbiddenSchemes: forbiddenSchemes) || _checkFork()
+    }
+    
+    private func _checkPaths(jailbreakIndicatorPaths: [String]) -> Bool {
         let fileManager = FileManager.default
         let jailbreakPaths = [
             "/Applications/Cydia.app",
@@ -78,7 +99,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
             "/var/mobile/Library/SBSettings/Themes"
         ]
 
-        let pathsToCheck = allowedPaths.count > 0 ? allowedPaths : jailbreakPaths
+        let pathsToCheck = jailbreakIndicatorPaths.count > 0 ? jailbreakIndicatorPaths : jailbreakPaths
 
         for path in pathsToCheck {
             if fileManager.fileExists(atPath: path) {
@@ -99,7 +120,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         }
     }
     
-    private func _hasThirdPartyAppStore(allowedSchemes: [String] = []) -> Bool {
+    private func _hasThirdPartyAppStore(forbiddenSchemes: [String] = []) -> Bool {
         let jailbreakSchemes = [
             "cydia://",
             "sileo://",
@@ -109,7 +130,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
             "activator://"
         ]
         
-        let schemesToCheck = allowedSchemes.count > 0 ? allowedSchemes : jailbreakSchemes
+        let schemesToCheck = forbiddenSchemes.count > 0 ? forbiddenSchemes : jailbreakSchemes
         
         for scheme in schemesToCheck {
             if let url = URL(string: scheme) {

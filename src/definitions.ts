@@ -11,32 +11,49 @@ export interface DeviceAuthenticityPlugin {
 
   isEmulator(): Promise<{ isEmulator: boolean } | { error: string }>;
   // iOS only
-  isJailbroken(
-    iosJailbreakPaths?: string[],
-  ): Promise<{ isJailbroken: boolean } | { error: string }>;
+  isJailbroken({
+    jailbreakIndicatorPaths,
+    forbiddenSchemes,
+  }: {
+    jailbreakIndicatorPaths?: string[];
+    forbiddenSchemes?: string[];
+  }): Promise<{ isJailbroken: boolean } | { error: string }>;
   // Android only
-  isRooted(
-    androidRootedPaths?: string[],
-  ): Promise<{ isRooted: boolean } | { error: string }>;
+  isRooted({
+    rootIndicatorPaths,
+    rootIndicatorTags,
+  }: {
+    rootIndicatorPaths?: string[];
+    rootIndicatorTags?: string[];
+    rootIndicatorFiles?: string[];
+  }): Promise<{ isRooted: boolean } | { error: string }>;
   // Android only
-  isInstalledFromAllowedStore(
-    allowedStores?: string[],
-  ): Promise<{ isInstalledFromAllowedStore: boolean } | { error: string }>;
+  isInstalledFromAllowedStore({
+    allowedStores,
+  }: {
+    allowedStores: string[];
+  }): Promise<{ isInstalledFromAllowedStore: boolean } | { error: string }>;
   // Android only
   getApkCertSignature(): Promise<
     { apkCertSignature: string } | { error: string }
   >;
   // Android only
-  checkApkCertSignature(
-    expectedApkSignature: string,
-  ): Promise<{ apkCertSignatureMatches: boolean } | { error: string }>;
+  checkApkCertSignature({
+    expectedApkSignature,
+  }: {
+    expectedApkSignature: string;
+  }): Promise<{ apkCertSignatureMatches: boolean } | { error: string }>;
   // Android only
-  checkTags(
-    rootIndicatorTags?: string[],
-  ): Promise<{ hasTags: boolean } | { error: string }>;
-  checkPaths(
-    rootIndicatorPaths?: string[],
-  ): Promise<{ hasPaths: boolean } | { error: string }>;
+  checkTags({
+    rootIndicatorTags,
+  }: {
+    rootIndicatorTags: string[];
+  }): Promise<{ hasTags: boolean } | { error: string }>;
+  checkPaths({
+    jailbreakIndicatorPaths,
+  }: {
+    jailbreakIndicatorPaths: string[];
+  }): Promise<{ hasPaths: boolean } | { error: string }>;
   // Android only
   checkExecutableFiles(): Promise<
     { hasExecutableFiles: boolean } | { error: string }
@@ -46,7 +63,9 @@ export interface DeviceAuthenticityPlugin {
     { canWritePrivate: boolean } | { error: string }
   >;
   // iOS only
-  hasThirdPartyAppStore(): Promise<{ hasThirdPartyAppStore: boolean } | { error: string }>;
+  hasThirdPartyAppStore(): Promise<
+    { hasThirdPartyAppStore: boolean } | { error: string }
+  >;
   isValid(value: unknown): value is boolean | string;
   isError(value: unknown): value is DeviceAuthenticityError;
 }
