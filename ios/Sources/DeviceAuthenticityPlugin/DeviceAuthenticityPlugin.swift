@@ -29,7 +29,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
 
     @objc func isJailbroken(_ call: CAPPluginCall) {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
-        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
+        let forbiddenSchemas = call.getArray("forbiddenSchemas", String.self) ?? []
+        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths, forbiddenSchemas: forbiddenSchemas)
         
         call.resolve(["isJailbroken": isJailbroken])
     }
