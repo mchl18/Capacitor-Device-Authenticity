@@ -28,7 +28,7 @@ import android.util.Base64;
 public class DeviceAuthenticity extends Plugin {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
-    private static final String[] DEFAULT_ALLOWED_TAGS = new String[] {
+    private static final String[] DEFAULT_FORBIDDEN_TAGS = new String[] {
             "test-keys", // Common for many rooted devices
             "dev-keys", // Development keys, often seen in custom ROMs
             "userdebug", // User-debuggable build, common in rooted devices
@@ -42,7 +42,7 @@ public class DeviceAuthenticity extends Plugin {
             "unofficial" // Unofficial build, common in custom ROMs
     };
 
-    private static final String[] DEFAULT_ALLOWED_PATHS = new String[] {
+    private static final String[] DEFAULT_FORBIDDEN_PATHS = new String[] {
             "/system/app/Superuser.apk",
             "/sbin/su",
             "/system/bin/su",
@@ -55,7 +55,7 @@ public class DeviceAuthenticity extends Plugin {
             "/su/bin/su"
     };
 
-    private static final String[] DEFAULT_ALLOWED_FILES = new String[] {
+    private static final String[] DEFAULT_FORBIDDEN_FILES = new String[] {
             "su",
             "/system/xbin/su",
             "/system/bin/su",
@@ -280,10 +280,9 @@ public class DeviceAuthenticity extends Plugin {
         String buildTags = android.os.Build.TAGS;
         String[] tagsToCheck;
         Integer rootIndicatorTagsArrayLength = rootIndicatorTagsArray.length();
-        
+
         if (buildTags == null || buildTags.isEmpty())
             return false;
-
 
         if (rootIndicatorTagsArrayLength > 0) {
             tagsToCheck = new String[rootIndicatorTagsArrayLength];
@@ -291,7 +290,7 @@ public class DeviceAuthenticity extends Plugin {
                 tagsToCheck[i] = rootIndicatorTagsArray.getString(i);
             }
         } else {
-            tagsToCheck = DEFAULT_ALLOWED_TAGS;
+            tagsToCheck = DEFAULT_FORBIDDEN_TAGS;
         }
 
         for (String tag : tagsToCheck) {
@@ -305,7 +304,7 @@ public class DeviceAuthenticity extends Plugin {
 
     private boolean _checkPaths(JSArray rootIndicatorPathsArray) {
         String[] paths;
-        Integer rootIndicatorPathsArrayLength = rootIndicatorPathsArray.length();   
+        Integer rootIndicatorPathsArrayLength = rootIndicatorPathsArray.length();
 
         if (rootIndicatorPathsArrayLength > 0) {
             paths = new String[rootIndicatorPathsArrayLength];
@@ -313,7 +312,7 @@ public class DeviceAuthenticity extends Plugin {
                 paths[i] = rootIndicatorPathsArray.getString(i);
             }
         } else {
-            paths = DEFAULT_ALLOWED_PATHS;
+            paths = DEFAULT_FORBIDDEN_PATHS;
         }
         for (String path : paths) {
             if (new File(path).exists())
@@ -332,7 +331,7 @@ public class DeviceAuthenticity extends Plugin {
                 executableFiles.add(rootIndicatorFilesArray.getString(i));
             }
         } else {
-            executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_ALLOWED_FILES));
+            executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_FORBIDDEN_FILES));
         }
 
         ArrayList<String> commands = new ArrayList<>(Arrays.asList(
