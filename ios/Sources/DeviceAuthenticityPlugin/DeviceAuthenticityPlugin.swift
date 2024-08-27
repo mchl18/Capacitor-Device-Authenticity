@@ -6,11 +6,11 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
         let forbiddenSchemes = call.getArray("forbiddenSchemes", String.self) ?? []
-        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths, forbiddenSchemes)
+        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths, forbiddenSchemes: forbiddenSchemes)
         let isEmulator = _isRunningOnSimulator()
         let hasThirdPartyAppStore = _hasThirdPartyAppStore()
         let canWritePrivate = _checkPrivateWrite()
-        let hasPaths = _checkPaths(jailbreakIndicatorPaths)
+        let hasPaths = _checkPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
         
         call.resolve([
             "isJailbroken": isJailbroken,
@@ -29,14 +29,14 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
 
     @objc func isJailbroken(_ call: CAPPluginCall) {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
-        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths)
+        let isJailbroken = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
         
         call.resolve(["isJailbroken": isJailbroken])
     }
 
     @objc func checkPaths(_ call: CAPPluginCall) {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
-        let hasPaths = _checkPaths(jailbreakIndicatorPaths)
+        let hasPaths = _checkPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
         
         call.resolve(["hasPaths": hasPaths])
     }

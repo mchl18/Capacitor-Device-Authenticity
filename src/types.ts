@@ -25,6 +25,19 @@ export type DeviceAuthenticityOptions = {
   // Android only
   apkSignature?: string;
   // Android only
+  // Override for the default root indicator paths which are:
+  // "/system/app/Superuser.apk",
+  // "/sbin/su",
+  // "/system/bin/su",
+  // "/system/xbin/su",
+  // "/data/local/xbin/su",
+  // "/data/local/bin/su",
+  // "/system/sd/xbin/su",
+  // "/system/bin/failsafe/su",
+  // "/data/local/su",
+  // "/su/bin/su"
+  rootIndicatorPaths?: string[];
+  // Android only
   // Override for the default root indicator tags which are:
   // "test-keys",           // Common for many rooted devices
   // "dev-keys",            // Development keys, often seen in custom ROMs
@@ -41,7 +54,7 @@ export type DeviceAuthenticityOptions = {
   // If you are planning to extend the list, please do as follow:
   // const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOT_INDICATOR_TAGS, ...yourList];
   // Then use completeList in the plugin. Otherwise, the default list will be used.
-  androidRootIndicatorTags?: string[];
+  rootIndicatorTags?: string[];
   // iOS only
   // Override for the default jailbreak paths which are:
   // "/Applications/Cydia.app",
