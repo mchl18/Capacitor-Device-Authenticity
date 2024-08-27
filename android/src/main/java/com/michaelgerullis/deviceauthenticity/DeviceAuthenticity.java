@@ -1,10 +1,7 @@
 package com.michaelgerullis.deviceauthenticity;
 
 import com.getcapacitor.JSObject;
-import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.PluginMethod;
-import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.JSArray;
 
 import java.io.File;
@@ -24,8 +21,7 @@ import android.content.pm.Signature;
 import android.content.pm.PackageInfo;
 import android.util.Base64;
 
-@CapacitorPlugin(name = "DeviceAuthenticity")
-public class DeviceAuthenticity extends Plugin {
+public class DeviceAuthenticity {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
     private static final String[] DEFAULT_FORBIDDEN_TAGS = new String[] {
@@ -62,7 +58,6 @@ public class DeviceAuthenticity extends Plugin {
             "busybox"
     };
 
-    @PluginMethod
     public void checkAuthenticity(PluginCall call) {
         try {
             String expectedApkSignature = call.getString("apkSignature");
@@ -90,7 +85,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void isRooted(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -105,7 +99,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void isEmulator(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -116,7 +109,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void isInstalledFromAllowedStore(PluginCall call) {
         try {
             // Get the allowed app stores from the call, or use default
@@ -130,7 +122,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void getApkCertSignature(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -142,7 +133,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void checkApkCertSignature(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -154,7 +144,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void checkTags(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -166,7 +155,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void checkPaths(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -178,7 +166,6 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void checkExecutableFiles(PluginCall call) {
         try {
             JSObject ret = new JSObject();
@@ -190,21 +177,18 @@ public class DeviceAuthenticity extends Plugin {
         }
     }
 
-    @PluginMethod
     public void isJailbroken(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("error", "Not implemented on Android");
         call.resolve(ret);
     }
 
-    @PluginMethod
     public void checkPrivateWrite(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("error", "Not implemented on Android");
         call.resolve(ret);
     }
 
-    @PluginMethod
     public void hasThirdPartyAppStore(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("error", "Not implemented on Android");

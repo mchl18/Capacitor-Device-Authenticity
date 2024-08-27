@@ -55,4 +55,29 @@ public class DeviceAuthenticityPlugin extends Plugin {
     public void checkTags(PluginCall call) {
         implementation.checkTags(call);
     }
+
+    @PluginMethod
+    public void checkPaths(PluginCall call) {
+        implementation.checkPaths(call);
+    }
+
+    @PluginMethod
+    public void checkExecutableFiles(PluginCall call) {
+        implementation.checkExecutableFiles(call);  
+    }
+
+    @PluginMethod
+    public void isJailbroken(PluginCall call) {
+        implementation.isJailbroken(call);
+    }
+
+    @PluginMethod
+    public void checkPrivateWrite(PluginCall call) {
+        implementation.checkPrivateWrite(call);
+    }
+
+    @PluginMethod
+    public void hasThirdPartyAppStore(PluginCall call) {
+        implementation.hasThirdPartyAppStore(call);
+    }
 }
