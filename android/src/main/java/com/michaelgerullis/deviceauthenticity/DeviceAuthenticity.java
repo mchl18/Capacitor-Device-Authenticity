@@ -82,11 +82,18 @@ public class DeviceAuthenticity {
             ret.put("isRooted",
                     _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
-            ret.put("apkSignatureMatch", _checkApkCertSignature(expectedApkSignature));
-            ret.put("apkSignature", apkSignature);
+            if (expectedApkSignature != null && !expectedApkSignature.isEmpty()) {
+                Boolean signatureMatch = _checkApkCertSignature(expectedApkSignature);
+                ret.put("apkSignatureMatch", signatureMatch);
+            }
+            if (apkSignature != null && !apkSignature.isEmpty()) {
+                ret.put("apkSignature", apkSignature);
+            }
             ret.put("hasPaths", _checkPaths(rootIndicatorPathsArray));
             ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
-
+            ret.put("hasTags", _checkTags(rootIndicatorTagsArray));
+            ret.put("hasExecutableFiles", _checkExecutableFiles(rootIndicatorFilesArray));
+            ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device authenticity: " + e.getMessage());

@@ -11,11 +11,19 @@ export type DeviceAuthenticityResult = {
   // If it is a string, it is the expected to be an error message.
   apkSignatureMatch?: boolean;
   // iOS only
-  hasPaths?: boolean;
+  hasOffendingPaths?: boolean;
   // iOS only
   canWritePrivate?: boolean;
   // iOS only
   hasThirdPartyAppStore?: boolean;
+  // iOS only
+  detectedThirdPartyAppStoreSchemas?: string[];
+  // iOS only
+  detectedPrivateWritePaths?: string[];
+  // iOS only
+  detectedForbiddenPaths?: string[];
+  // Both Android and iOS
+  failedChecks?: string[];
   error?: string;
 };
 
