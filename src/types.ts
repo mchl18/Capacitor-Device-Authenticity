@@ -83,7 +83,7 @@ export type DeviceAuthenticityOptions = {
   // "filza://",
   // "undecimus://",
   // "activator://"
-  forbiddenSchemas?: string[];
+  forbiddenAppStoreSchemas?: string[];
   // Android only
   // Override for the default rooted paths which are:
   // "/system/app/Superuser.apk",
@@ -108,7 +108,7 @@ export type DeviceAuthenticityError = {
 
 export type DeviceAuthenticityJailbreakOptions = {
   jailbreakIndicatorPaths?: string[];
-  forbiddenSchemas?: string[];
+  forbiddenAppStoreSchemas?: string[];
 };
 
 export type DeviceAuthenticityRootedOptions = {
