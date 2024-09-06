@@ -21,6 +21,8 @@ import android.content.pm.Signature;
 import android.content.pm.PackageInfo;
 import android.util.Base64;
 
+import org.json.JSONException;
+
 public class DeviceAuthenticity {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
@@ -57,6 +59,12 @@ public class DeviceAuthenticity {
             "/system/bin/su",
             "busybox"
     };
+
+    private Context context;
+
+    public DeviceAuthenticity(Context context) {
+        this.context = context;
+    }
 
     public void checkAuthenticity(PluginCall call) {
         try {
@@ -198,12 +206,12 @@ public class DeviceAuthenticity {
     private String _getApkCertSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
         PackageInfo packageInfo;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(),
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
                     PackageManager.GET_SIGNING_CERTIFICATES);
             Signature[] signatures = packageInfo.signingInfo.getApkContentsSigners();
             return _calculateSignature(signatures[0]);
         } else {
-            packageInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(),
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
                     PackageManager.GET_SIGNATURES);
             Signature[] signatures = packageInfo.signatures;
             return _calculateSignature(signatures[0]);
@@ -211,11 +219,19 @@ public class DeviceAuthenticity {
     }
 
     private Boolean _checkApkCertSignature(String expectedApkSignature) {
-        String apkSignature = _getApkCertSignature();
-        String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
-        String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
-        boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
-        return isValid;
+        try {
+            String apkSignature = _getApkCertSignature();
+            if (expectedApkSignature == null || expectedApkSignature.isEmpty()) {
+                return true;
+            }
+            String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
+            String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
+            boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
+            return isValid;
+        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private String _calculateSignature(Signature sig) throws NoSuchAlgorithmException {
@@ -256,22 +272,26 @@ public class DeviceAuthenticity {
 
     private boolean _checkIsRooted(JSArray rootIndicatorTagsArray, JSArray rootIndicatorPathsArray,
             JSArray rootIndicatorFilesArray) {
-        return _checkTags(rootIndicatorTagsArray)
-                || _checkPaths(rootIndicatorPathsArray)
-                || _checkExecutableFiles(rootIndicatorFilesArray);
+        try {
+            return _checkTags(rootIndicatorTagsArray)
+                    || _checkPaths(rootIndicatorPathsArray)
+                    || _checkExecutableFiles(rootIndicatorFilesArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    private boolean _checkTags(JSArray rootIndicatorTagsArray) {
+    private boolean _checkTags(JSArray rootIndicatorTagsArray) throws JSONException {
         String buildTags = android.os.Build.TAGS;
         String[] tagsToCheck;
-        Integer rootIndicatorTagsArrayLength = rootIndicatorTagsArray.length();
 
         if (buildTags == null || buildTags.isEmpty())
             return false;
 
-        if (rootIndicatorTagsArrayLength > 0) {
-            tagsToCheck = new String[rootIndicatorTagsArrayLength];
-            for (int i = 0; i < rootIndicatorTagsArrayLength; i++) {
+        if (rootIndicatorTagsArray != null && rootIndicatorTagsArray.length() > 0) {
+            tagsToCheck = new String[rootIndicatorTagsArray.length()];
+            for (int i = 0; i < rootIndicatorTagsArray.length(); i++) {
                 tagsToCheck[i] = rootIndicatorTagsArray.getString(i);
             }
         } else {
@@ -287,13 +307,12 @@ public class DeviceAuthenticity {
         return false;
     }
 
-    private boolean _checkPaths(JSArray rootIndicatorPathsArray) {
+    private boolean _checkPaths(JSArray rootIndicatorPathsArray) throws JSONException {
         String[] paths;
-        Integer rootIndicatorPathsArrayLength = rootIndicatorPathsArray.length();
 
-        if (rootIndicatorPathsArrayLength > 0) {
-            paths = new String[rootIndicatorPathsArrayLength];
-            for (int i = 0; i < rootIndicatorPathsArrayLength; i++) {
+        if (rootIndicatorPathsArray != null && rootIndicatorPathsArray.length() > 0) {
+            paths = new String[rootIndicatorPathsArray.length()];
+            for (int i = 0; i < rootIndicatorPathsArray.length(); i++) {
                 paths[i] = rootIndicatorPathsArray.getString(i);
             }
         } else {
@@ -306,13 +325,12 @@ public class DeviceAuthenticity {
         return false;
     }
 
-    private boolean _checkExecutableFiles(JSArray rootIndicatorFilesArray) {
+    private boolean _checkExecutableFiles(JSArray rootIndicatorFilesArray) throws JSONException {
         ArrayList<String> executableFiles;
-        Integer rootIndicatorFilesArrayLength = rootIndicatorFilesArray.length();
 
-        if (rootIndicatorFilesArrayLength > 0) {
+        if (rootIndicatorFilesArray != null && rootIndicatorFilesArray.length() > 0) {
             executableFiles = new ArrayList<>();
-            for (int i = 0; i < rootIndicatorFilesArrayLength; i++) {
+            for (int i = 0; i < rootIndicatorFilesArray.length(); i++) {
                 executableFiles.add(rootIndicatorFilesArray.getString(i));
             }
         } else {
@@ -357,9 +375,12 @@ public class DeviceAuthenticity {
 
     private boolean _isInstalledFromAllowedStore(List<String> allowedStores) {
         try {
-            String installer = getContext().getPackageManager()
-                    .getInstallerPackageName(getContext().getPackageName());
+            String installer = context.getPackageManager()
+                    .getInstallerPackageName(context.getPackageName());
             if (installer == null) {
+                return false;
+            }
+            if (allowedStores == null || allowedStores.isEmpty()) {
                 return false;
             }
             for (String store : allowedStores) {
@@ -374,12 +395,11 @@ public class DeviceAuthenticity {
         }
     }
 
-    private List<String> _getAllowedStores(JSArray allowedStoresArray) {
+    private List<String> _getAllowedStores(JSArray allowedStoresArray) throws JSONException {
         List<String> allowedStores = new ArrayList<>();
-        Integer allowedStoresArrayLength = allowedStoresArray.length();
 
-        if (allowedStoresArrayLength > 0) {
-            for (int i = 0; i < allowedStoresArrayLength; i++) {
+        if (allowedStoresArray != null && allowedStoresArray.length() > 0) {
+            for (int i = 0; i < allowedStoresArray.length(); i++) {
                 allowedStores.add(allowedStoresArray.getString(i));
             }
         } else {

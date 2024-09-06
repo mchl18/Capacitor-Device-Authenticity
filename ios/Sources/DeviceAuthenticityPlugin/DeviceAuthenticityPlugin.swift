@@ -49,7 +49,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
     }
 
     @objc func hasThirdPartyAppStore(_ call: CAPPluginCall) {
-        let hasThirdPartyAppStore = _hasThirdPartyAppStore()
+        let forbiddenSchemas = call.getArray("forbiddenSchemas", String.self) ?? []
+        let hasThirdPartyAppStore = _hasThirdPartyAppStore(forbiddenSchemas: forbiddenSchemas)
         
         call.resolve(["hasThirdPartyAppStore": hasThirdPartyAppStore])
     }
@@ -133,8 +134,8 @@ public class DeviceAuthenticityPlugin: CAPPlugin {
         
         let schemasToCheck = forbiddenSchemas.count > 0 ? forbiddenSchemas : jailbreakSchemas
         
-        for scheme in schemasToCheck {
-            if let url = URL(string: scheme) {
+        for schema in schemasToCheck {
+            if let url = URL(string: schema) {
                 if UIApplication.shared.canOpenURL(url) {
                     return true
                 }

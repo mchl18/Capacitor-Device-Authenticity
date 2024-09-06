@@ -5,6 +5,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import android.content.Context;
 
 @CapacitorPlugin(name = "DeviceAuthenticity")
 public class DeviceAuthenticityPlugin extends Plugin {
@@ -13,7 +14,8 @@ public class DeviceAuthenticityPlugin extends Plugin {
 
     @Override
     public void load() {
-        implementation = new DeviceAuthenticity();
+        Context context = getContext();
+        implementation = new DeviceAuthenticity(context);
     }
 
     @PluginMethod
@@ -38,7 +40,7 @@ public class DeviceAuthenticityPlugin extends Plugin {
     
     @PluginMethod
     public void getApkSignature(PluginCall call) {
-        implementation.getApkSignature(call);
+        implementation.getApkCertSignature(call);
     }
 
     @PluginMethod

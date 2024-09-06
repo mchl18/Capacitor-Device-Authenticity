@@ -35,8 +35,21 @@ npx cap sync
 
 <docgen-index>
 
-- [`checkAuthenticity(...)`](#checkauthenticity)
-- [Type Aliases](#type-aliases)
+* [`checkAuthenticity(...)`](#checkauthenticity)
+* [`isEmulator()`](#isemulator)
+* [`isJailbroken(...)`](#isjailbroken)
+* [`isRooted(...)`](#isrooted)
+* [`isInstalledFromAllowedStore(...)`](#isinstalledfromallowedstore)
+* [`getApkCertSignature()`](#getapkcertsignature)
+* [`checkApkCertSignature(...)`](#checkapkcertsignature)
+* [`checkTags(...)`](#checktags)
+* [`checkPaths(...)`](#checkpaths)
+* [`checkExecutableFiles(...)`](#checkexecutablefiles)
+* [`checkPrivateWrite()`](#checkprivatewrite)
+* [`hasThirdPartyAppStore()`](#hasthirdpartyappstore)
+* [`isValid(...)`](#isvalid)
+* [`isError(...)`](#iserror)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -55,17 +68,239 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityresult">DeviceAuthenticityResult</a>&gt;</code>
 
----
+--------------------
+
+
+### isEmulator()
+
+```typescript
+isEmulator() => Promise<{ isEmulator: boolean; } | { error: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ isEmulator: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### isJailbroken(...)
+
+```typescript
+isJailbroken(options?: DeviceAuthenticityJailbreakOptions | undefined) => Promise<{ isJailbroken: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticityjailbreakoptions">DeviceAuthenticityJailbreakOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ isJailbroken: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### isRooted(...)
+
+```typescript
+isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isRooted: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticityrootedoptions">DeviceAuthenticityRootedOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ isRooted: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### isInstalledFromAllowedStore(...)
+
+```typescript
+isInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedStoreOptions | undefined) => Promise<{ isInstalledFromAllowedStore: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                                                              |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticityinstalledfromallowedstoreoptions">DeviceAuthenticityInstalledFromAllowedStoreOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ isInstalledFromAllowedStore: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### getApkCertSignature()
+
+```typescript
+getApkCertSignature() => Promise<{ apkCertSignature: string; } | { error: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ apkCertSignature: string; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### checkApkCertSignature(...)
+
+```typescript
+checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions | undefined) => Promise<{ apkCertSignatureMatches: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitycheckapkcertsignatureoptions">DeviceAuthenticityCheckApkCertSignatureOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ apkCertSignatureMatches: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### checkTags(...)
+
+```typescript
+checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{ hasTags: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitychecktagsoptions">DeviceAuthenticityCheckTagsOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ hasTags: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### checkPaths(...)
+
+```typescript
+checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise<{ hasPaths: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitycheckpathsoptions">DeviceAuthenticityCheckPathsOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ hasPaths: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### checkExecutableFiles(...)
+
+```typescript
+checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | undefined) => Promise<{ hasExecutableFiles: boolean; } | { error: string; }>
+```
+
+| Param         | Type                                                                                                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitycheckexecutablefilesoptions">DeviceAuthenticityCheckExecutableFilesOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ hasExecutableFiles: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### checkPrivateWrite()
+
+```typescript
+checkPrivateWrite() => Promise<{ canWritePrivate: boolean; } | { error: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ canWritePrivate: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### hasThirdPartyAppStore()
+
+```typescript
+hasThirdPartyAppStore() => Promise<{ hasThirdPartyAppStore: boolean; } | { error: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ hasThirdPartyAppStore: boolean; } | { error: string; }&gt;</code>
+
+--------------------
+
+
+### isValid(...)
+
+```typescript
+isValid(value: unknown) => value is string | boolean
+```
+
+| Param       | Type                 |
+| ----------- | -------------------- |
+| **`value`** | <code>unknown</code> |
+
+**Returns:** <code>boolean</code>
+
+--------------------
+
+
+### isError(...)
+
+```typescript
+isError(value: unknown) => value is DeviceAuthenticityError
+```
+
+| Param       | Type                 |
+| ----------- | -------------------- |
+| **`value`** | <code>unknown</code> |
+
+**Returns:** <code>boolean</code>
+
+--------------------
+
 
 ### Type Aliases
 
+
 #### DeviceAuthenticityResult
 
-<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only // If it is a string, it is the expected to be an error message. apkSignatureMatch?: boolean | string; error?: string; }</code>
+<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only // If it is a string, it is the expected to be an error message. apkSignatureMatch?: boolean; // iOS only hasPaths?: boolean; // iOS only canWritePrivate?: boolean; // iOS only hasThirdPartyAppStore?: boolean; error?: string; }</code>
+
 
 #### DeviceAuthenticityOptions
 
-<code>{ allowedStores?: string[]; apkSignature?: string; }</code>
+<code>{ // Android only allowedStores?: string[]; // Android only apkSignature?: string; // Android only // Override for the default root indicator paths which are: // "/system/app/Superuser.apk", // "/sbin/su", // "/system/bin/su", // "/system/xbin/su", // "/data/local/xbin/su", // "/data/local/bin/su", // "/system/sd/xbin/su", // "/system/bin/failsafe/su", // "/data/local/su", // "/su/bin/su" rootIndicatorPaths?: string[]; // Android only // Override for the default root indicator tags which are: // "test-keys", // Common for many rooted devices // "dev-keys", // Development keys, often seen in custom ROMs // "userdebug", // User-debuggable build, common in rooted devices // "engineering", // Engineering build, may indicate a modified system // "release-keys-debug", // Debug version of release keys // "custom", // Explicitly marked as custom // "rooted", // Explicitly marked as rooted (rare, but possible) // "supersu", // Indicates SuperSU rooting tool // "magisk", // Indicates Magisk rooting framework // "lineage", // LineageOS custom ROM // "unofficial" // Unofficial build, common in custom ROMs // If you are planning to extend the list, please do as follow: // const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOT_INDICATOR_TAGS, ...yourList]; // Then use completeList in the plugin. Otherwise, the default list will be used. rootIndicatorTags?: string[]; // iOS only // Override for the default jailbreak paths which are: // "/Applications/Cydia.app", // "/Library/MobileSubstrate/MobileSubstrate.dylib", // "/bin/bash", // "/usr/sbin/sshd", // "/etc/apt", // "/private/var/lib/apt/" // If you are planning to extend the list, please do as follow: // const completeList = [...DeviceAuthenticityWeb.DEFAULT_IOS_JAILBREAK_PATHS, ...yourList]; // Then use completeList in the plugin. Otherwise, the default list will be used. jailbreakIndicatorPaths?: string[]; // iOS only // Override for the default forbidden schemas which are: // "cydia://", // "sileo://", // "zbra://", // "filza://", // "undecimus://", // "activator://" forbiddenSchemas?: string[]; // Android only // Override for the default rooted paths which are: // "/system/app/Superuser.apk", // "/sbin/su", // "/system/bin/su", // "/system/xbin/su", // "/data/local/xbin/su", // "/data/local/bin/su", // "/system/sd/xbin/su", // "/system/bin/failsafe/su", // "/data/local/su", // "/su/bin/su" // If you are planning to extend the list, please do as follow: // const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOTED_PATHS, ...yourList]; // Then use completeList in the plugin. Otherwise, the default list will be used. androidRootedPaths?: string[]; }</code>
+
+
+#### DeviceAuthenticityJailbreakOptions
+
+<code>{ jailbreakIndicatorPaths?: string[]; forbiddenSchemas?: string[]; }</code>
+
+
+#### DeviceAuthenticityRootedOptions
+
+<code>{ rootIndicatorPaths?: string[]; rootIndicatorTags?: string[]; rootIndicatorFiles?: string[]; }</code>
+
+
+#### DeviceAuthenticityInstalledFromAllowedStoreOptions
+
+<code>{ allowedStores?: string[]; }</code>
+
+
+#### DeviceAuthenticityCheckApkCertSignatureOptions
+
+<code>{ expectedApkSignature: string; }</code>
+
+
+#### DeviceAuthenticityCheckTagsOptions
+
+<code>{ rootIndicatorTags: string[]; }</code>
+
+
+#### DeviceAuthenticityCheckPathsOptions
+
+<code>{ jailbreakIndicatorPaths: string[]; }</code>
+
+
+#### DeviceAuthenticityCheckExecutableFilesOptions
+
+<code>{ rootIndicatorFiles: string[]; }</code>
+
+
+#### DeviceAuthenticityError
+
+<code>{ error: string; }</code>
 
 </docgen-api>
 
