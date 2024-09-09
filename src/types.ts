@@ -8,9 +8,9 @@ export type DeviceAuthenticityResult = {
   // iOS only
   isJailbroken?: boolean;
   // Android only
-  apkSignature?: string;
+  apkCertSignature?: string;
   // If it is a string, it is the expected to be an error message.
-  apkSignatureMatch?: boolean;
+  apkCertSignatureMatch?: boolean;
   // Android only
   hasOffendingExecutableFiles?: boolean;
   // Android only
@@ -26,7 +26,7 @@ export type DeviceAuthenticityResult = {
   // iOS only
   detectedPrivateWritePaths?: string[];
   // iOS only
-  detectedForbiddenPaths?: string[];
+  detectedOffendingPaths?: string[];
   // Both Android and iOS
   failedChecks?: string[];
   error?: string;
@@ -36,7 +36,7 @@ export type DeviceAuthenticityOptions = {
   // Android only
   allowedStores?: string[];
   // Android only
-  apkSignature?: string;
+  apkCertSignature?: string;
   // Android only
   // Override for the default root indicator paths which are:
   // "/system/app/Superuser.apk",
@@ -88,7 +88,7 @@ export type DeviceAuthenticityOptions = {
   // "filza://",
   // "undecimus://",
   // "activator://"
-  forbiddenAppStoreSchemas?: string[];
+  offendingAppStoreSchemas?: string[];
   // Android only
   // Override for the default rooted paths which are:
   // "/system/app/Superuser.apk",

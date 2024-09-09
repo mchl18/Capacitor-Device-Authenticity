@@ -68,7 +68,7 @@ public class DeviceAuthenticity {
 
     public void checkAuthenticity(PluginCall call) {
         try {
-            String expectedApkSignature = call.getString("apkSignature");
+            String expectedApkSignature = call.getString("apkCertSignature");
             JSObject ret = new JSObject();
             JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
             JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
@@ -91,12 +91,12 @@ public class DeviceAuthenticity {
 
             if (expectedApkSignature != null && !expectedApkSignature.isEmpty()) {
                 Boolean signatureMatch = _checkApkCertSignature(expectedApkSignature);
-                ret.put("apkSignatureMatch", signatureMatch);
+                ret.put("apkCertSignatureMatch", signatureMatch);
                 if (!signatureMatch) failedChecks.put("APK signature mismatch");
             }
 
             if (apkSignature != null && !apkSignature.isEmpty()) {
-                ret.put("apkSignature", apkSignature);
+                ret.put("apkCertSignature", apkSignature);
             }
 
             boolean hasOffendingPaths = _checkPaths(rootIndicatorPathsArray);
@@ -185,7 +185,7 @@ public class DeviceAuthenticity {
         try {
             JSObject ret = new JSObject();
             JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
-            ret.put("hasTags", _checkTags(rootIndicatorTagsArray));
+            ret.put("hasOffendingTags", _checkTags(rootIndicatorTagsArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build tags: " + e.getMessage());
@@ -196,7 +196,7 @@ public class DeviceAuthenticity {
         try {
             JSObject ret = new JSObject();
             JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
-            ret.put("hasPaths", _checkPaths(rootIndicatorPathsArray));
+            ret.put("hasOffendingPaths", _checkPaths(rootIndicatorPathsArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking build paths: " + e.getMessage());
@@ -207,7 +207,7 @@ public class DeviceAuthenticity {
         try {
             JSObject ret = new JSObject();
             JSArray rootIndicatorFilesArray = call.getArray("rootIndicatorFiles");
-            ret.put("hasExecutableFiles", _checkExecutableFiles(rootIndicatorFilesArray));
+            ret.put("hasOffendingExecutableFiles", _checkExecutableFiles(rootIndicatorFilesArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking executable files: " + e.getMessage());
