@@ -8,6 +8,7 @@ export type DeviceAuthenticityResult = {
   // iOS only
   isJailbroken?: boolean;
   // Android only
+  apkSignature?: string;
   // If it is a string, it is the expected to be an error message.
   apkSignatureMatch?: boolean;
   // Android only
