@@ -28,7 +28,7 @@ export interface DeviceAuthenticityPlugin {
   // Android only
   isInstalledFromAllowedStore(
     options?: DeviceAuthenticityInstalledFromAllowedStoreOptions,
-  ): Promise<{ isInstalledFromAllowedStore: boolean } | { error: string }>;
+  ): Promise<{ isNotInstalledFromAllowedStore: boolean } | { error: string }>;
   // Android only
   getApkCertSignature(): Promise<
     { apkCertSignature: string } | { error: string }
@@ -40,14 +40,14 @@ export interface DeviceAuthenticityPlugin {
   // Android only
   checkTags(
     options?: DeviceAuthenticityCheckTagsOptions,
-  ): Promise<{ hasTags: boolean } | { error: string }>;
+  ): Promise<{ hasOffendingTags: boolean } | { error: string }>;
   checkPaths(
     options?: DeviceAuthenticityCheckPathsOptions,
-  ): Promise<{ hasPaths: boolean } | { error: string }>;
+  ): Promise<{ hasOffendingPaths: boolean } | { error: string }>;
   // Android only
   checkExecutableFiles(
     options?: DeviceAuthenticityCheckExecutableFilesOptions,
-  ): Promise<{ hasExecutableFiles: boolean } | { error: string }>;
+  ): Promise<{ hasOffendingExecutableFiles: boolean } | { error: string }>;
   // iOS only
   checkPrivateWrite(): Promise<
     { canWritePrivate: boolean } | { error: string }
