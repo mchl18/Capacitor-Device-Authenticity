@@ -247,14 +247,14 @@ public class DeviceAuthenticity {
         }
     }
 
-    private Boolean _checkApkCertSignature(String expectedApkSignature) {
+    private Boolean _checkApkCertSignature(String expectedApCertkSignature) {
         try {
-            String apkSignature = _getApkCertSignature();
-            if (expectedApkSignature == null || expectedApkSignature.isEmpty()) {
+            String apkCertSignature = _getApkCertSignature();
+            if (expectedApCertkSignature == null || expectedApCertkSignature.isEmpty()) {
                 return true;
             }
-            String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
-            String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
+            String parsedExpectedApkSignature = expectedApCertkSignature.replace(":", "").toLowerCase();
+            String parsedApkSignature = apkCertSignature.replace(":", "").toLowerCase();
             boolean isValid = parsedApkSignature.equals(parsedExpectedApkSignature);
             return isValid;
         } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {

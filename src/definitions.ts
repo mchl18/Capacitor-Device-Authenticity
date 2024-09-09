@@ -26,7 +26,7 @@ export interface DeviceAuthenticityPlugin {
     options?: DeviceAuthenticityRootedOptions,
   ): Promise<{ isRooted: boolean } | { error: string }>;
   // Android only
-  isInstalledFromAllowedStore(
+  isNotInstalledFromAllowedStore(
     options?: DeviceAuthenticityInstalledFromAllowedStoreOptions,
   ): Promise<{ isNotInstalledFromAllowedStore: boolean } | { error: string }>;
   // Android only
