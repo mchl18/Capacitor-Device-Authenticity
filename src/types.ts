@@ -4,12 +4,16 @@ export type DeviceAuthenticityResult = {
   // Both Android and iOS
   isEmulator?: boolean;
   // Android only
-  isInstalledFromAllowedStore?: boolean;
+  isNotInstalledFromAllowedStore?: boolean;
   // iOS only
   isJailbroken?: boolean;
   // Android only
   // If it is a string, it is the expected to be an error message.
   apkSignatureMatch?: boolean;
+  // Android only
+  hasOffendingExecutableFiles?: boolean;
+  // Android only
+  hasOffendingTags?: boolean;
   // iOS only
   hasOffendingPaths?: boolean;
   // iOS only

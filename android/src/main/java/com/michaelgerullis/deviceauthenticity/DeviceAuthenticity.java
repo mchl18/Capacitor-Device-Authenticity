@@ -79,21 +79,43 @@ public class DeviceAuthenticity {
             JSArray allowedStoresArray = call.getArray("allowedStores");
             List<String> allowedStores = _getAllowedStores(allowedStoresArray);
 
-            ret.put("isRooted",
-                    _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
-            ret.put("isEmulator", _isEmulator() || _isRunningInEmulator());
+            JSArray failedChecks = new JSArray();
+
+            boolean isRooted = _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray);
+            ret.put("isRooted", isRooted);
+            if (isRooted) failedChecks.put("Device is rooted");
+
+            boolean isEmulator = _isEmulator() || _isRunningInEmulator();
+            ret.put("isEmulator", isEmulator);
+            if (isEmulator) failedChecks.put("Device is an emulator");
+
             if (expectedApkSignature != null && !expectedApkSignature.isEmpty()) {
                 Boolean signatureMatch = _checkApkCertSignature(expectedApkSignature);
                 ret.put("apkSignatureMatch", signatureMatch);
+                if (!signatureMatch) failedChecks.put("APK signature mismatch");
             }
+
             if (apkSignature != null && !apkSignature.isEmpty()) {
                 ret.put("apkSignature", apkSignature);
             }
-            ret.put("hasPaths", _checkPaths(rootIndicatorPathsArray));
-            ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
-            ret.put("hasTags", _checkTags(rootIndicatorTagsArray));
-            ret.put("hasExecutableFiles", _checkExecutableFiles(rootIndicatorFilesArray));
-            ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
+
+            boolean hasOffendingPaths = _checkPaths(rootIndicatorPathsArray);
+            ret.put("hasOffendingPaths", hasOffendingPaths);
+            if (hasOffendingPaths) failedChecks.put("hasOffendingPaths");
+
+            boolean isNotInstalledFromAllowedStore = _isNotInstalledFromAllowedStore(allowedStores);
+            ret.put("isNotInstalledFromAllowedStore", isNotInstalledFromAllowedStore);
+            if (isNotInstalledFromAllowedStore) failedChecks.put("isNotInstalledFromAllowedStore");
+
+            boolean hasOffendingTags = _checkTags(hasOffendingTagsArray);
+            ret.put("hasOffendingTags", hasOffendingTags);
+            if (hasOffendingTags) failedChecks.put("hasOffendingTags");
+
+            boolean hasOffendingExecutableFiles = _checkExecutableFiles(rootIndicatorFilesArray);
+            ret.put("hasOffendingExecutableFiles", hasOffendingExecutableFiles);
+            if (hasOffendingExecutableFiles) failedChecks.put("hasOffendingExecutableFiles");
+
+            ret.put("failedChecks", failedChecks);
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device authenticity: " + e.getMessage());
@@ -124,13 +146,13 @@ public class DeviceAuthenticity {
         }
     }
 
-    public void isInstalledFromAllowedStore(PluginCall call) {
+    public void isNotInstalledFromAllowedStore(PluginCall call) {
         try {
             // Get the allowed app stores from the call, or use default
             JSArray allowedStoresArray = call.getArray("allowedStores");
             List<String> allowedStores = _getAllowedStores(allowedStoresArray);
             JSObject ret = new JSObject();
-            ret.put("isInstalledFromAllowedStore", _isInstalledFromAllowedStore(allowedStores));
+            ret.put("isNotInstalledFromAllowedStore", _isNotInstalledFromAllowedStore(allowedStores));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device emulator status: " + e.getMessage());
@@ -233,7 +255,7 @@ public class DeviceAuthenticity {
             }
             String parsedExpectedApkSignature = expectedApkSignature.replace(":", "").toLowerCase();
             String parsedApkSignature = apkSignature.replace(":", "").toLowerCase();
-            boolean isValid = apkSignature.equals(parsedExpectedApkSignature);
+            boolean isValid = parsedApkSignature.equals(parsedExpectedApkSignature);
             return isValid;
         } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -380,22 +402,22 @@ public class DeviceAuthenticity {
         }
     }
 
-    private boolean _isInstalledFromAllowedStore(List<String> allowedStores) {
+    private boolean _isNotInstalledFromAllowedStore(List<String> allowedStores) {
         try {
             String installer = context.getPackageManager()
                     .getInstallerPackageName(context.getPackageName());
             if (installer == null) {
-                return false;
+                return true;
             }
             if (allowedStores == null || allowedStores.isEmpty()) {
-                return false;
+                return true;
             }
             for (String store : allowedStores) {
                 if (installer.equals(store)) {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
