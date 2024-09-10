@@ -39,7 +39,7 @@ npx cap sync
 * [`isEmulator()`](#isemulator)
 * [`isJailbroken(...)`](#isjailbroken)
 * [`isRooted(...)`](#isrooted)
-* [`isInstalledFromAllowedStore(...)`](#isinstalledfromallowedstore)
+* [`isNotInstalledFromAllowedStore(...)`](#isnotinstalledfromallowedstore)
 * [`getApkCertSignature()`](#getapkcertsignature)
 * [`checkApkCertSignature(...)`](#checkapkcertsignature)
 * [`checkTags(...)`](#checktags)
@@ -112,17 +112,17 @@ isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isR
 --------------------
 
 
-### isInstalledFromAllowedStore(...)
+### isNotInstalledFromAllowedStore(...)
 
 ```typescript
-isInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedStoreOptions | undefined) => Promise<{ isInstalledFromAllowedStore: boolean; } | { error: string; }>
+isNotInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedStoreOptions | undefined) => Promise<{ isNotInstalledFromAllowedStore: boolean; } | { error: string; }>
 ```
 
 | Param         | Type                                                                                                                              |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticityinstalledfromallowedstoreoptions">DeviceAuthenticityInstalledFromAllowedStoreOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ isInstalledFromAllowedStore: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ isNotInstalledFromAllowedStore: boolean; } | { error: string; }&gt;</code>
 
 --------------------
 
@@ -156,14 +156,14 @@ checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions |
 ### checkTags(...)
 
 ```typescript
-checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{ hasTags: boolean; } | { error: string; }>
+checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{ hasOffendingTags: boolean; } | { error: string; }>
 ```
 
 | Param         | Type                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitychecktagsoptions">DeviceAuthenticityCheckTagsOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ hasTags: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ hasOffendingTags: boolean; } | { error: string; }&gt;</code>
 
 --------------------
 
@@ -171,14 +171,14 @@ checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{
 ### checkPaths(...)
 
 ```typescript
-checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise<{ hasPaths: boolean; } | { error: string; }>
+checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise<{ hasOffendingPaths: boolean; } | { error: string; }>
 ```
 
 | Param         | Type                                                                                                |
 | ------------- | --------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitycheckpathsoptions">DeviceAuthenticityCheckPathsOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ hasPaths: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ hasOffendingPaths: boolean; } | { error: string; }&gt;</code>
 
 --------------------
 
@@ -186,14 +186,14 @@ checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise
 ### checkExecutableFiles(...)
 
 ```typescript
-checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | undefined) => Promise<{ hasExecutableFiles: boolean; } | { error: string; }>
+checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | undefined) => Promise<{ hasOffendingExecutableFiles: boolean; } | { error: string; }>
 ```
 
 | Param         | Type                                                                                                                    |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitycheckexecutablefilesoptions">DeviceAuthenticityCheckExecutableFilesOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ hasExecutableFiles: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ hasOffendingExecutableFiles: boolean; } | { error: string; }&gt;</code>
 
 --------------------
 

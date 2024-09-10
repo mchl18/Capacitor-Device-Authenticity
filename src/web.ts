@@ -73,8 +73,8 @@ export class DeviceAuthenticityWeb
     return { error: 'Not available on web' };
   }
 
-  async isInstalledFromAllowedStore(): Promise<
-    { error: string } | { isInstalledFromAllowedStore: boolean }
+  async isNotInstalledFromAllowedStore(): Promise<
+    { error: string } | { isNotInstalledFromAllowedStore: boolean }
   > {
     return { error: 'Not available on web' };
   }
@@ -91,16 +91,16 @@ export class DeviceAuthenticityWeb
     return { error: 'Not available on web' };
   }
 
-  async checkTags(): Promise<{ error: string } | { hasTags: boolean }> {
+  async checkTags(): Promise<{ error: string } | { hasOffendingTags: boolean }> {
     return { error: 'Not available on web' };
   }
 
-  async checkPaths(): Promise<{ error: string } | { hasPaths: boolean }> {
+  async checkPaths(): Promise<{ error: string } | { hasOffendingPaths: boolean }> {
     return { error: 'Not available on web' };
   }
 
   async checkExecutableFiles(): Promise<
-    { error: string } | { hasExecutableFiles: boolean }
+    { error: string } | { hasOffendingExecutableFiles: boolean }
   > {
     return { error: 'Not available on web' };
   }
