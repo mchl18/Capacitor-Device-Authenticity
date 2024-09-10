@@ -107,7 +107,7 @@ public class DeviceAuthenticity {
             ret.put("isNotInstalledFromAllowedStore", isNotInstalledFromAllowedStore);
             if (isNotInstalledFromAllowedStore) failedChecks.put("isNotInstalledFromAllowedStore");
 
-            boolean hasOffendingTags = _checkTags(hasOffendingTagsArray);
+            boolean hasOffendingTags = _checkTags(rootIndicatorTagsArray);
             ret.put("hasOffendingTags", hasOffendingTags);
             if (hasOffendingTags) failedChecks.put("hasOffendingTags");
 
