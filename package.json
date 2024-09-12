@@ -1,6 +1,6 @@
 {
   "name": "capacitor-device-authenticity",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Check the authenticity of an Ionic Capacitor app",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
