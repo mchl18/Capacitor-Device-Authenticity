@@ -29,7 +29,6 @@ export type DeviceAuthenticityResult = {
   detectedOffendingPaths?: string[];
   // Both Android and iOS
   failedChecks?: string[];
-  error?: string;
 };
 
 export type DeviceAuthenticityOptions = {

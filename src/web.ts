@@ -57,61 +57,71 @@ export class DeviceAuthenticityWeb
     '/su/bin/su',
   ];
 
-  async checkAuthenticity(): Promise<DeviceAuthenticityResult> {
+  async checkAuthenticity(): Promise<
+    DeviceAuthenticityResult | DeviceAuthenticityError
+  > {
     return { error: 'Not available on web' };
   }
 
-  async isEmulator(): Promise<{ error: string } | { isEmulator: boolean }> {
+  async isEmulator(): Promise<
+    { isEmulator: boolean } | DeviceAuthenticityError
+  > {
     return { error: 'Not available on web' };
   }
 
-  async isJailbroken(): Promise<{ error: string } | { isJailbroken: boolean }> {
+  async isJailbroken(): Promise<
+    { isJailbroken: boolean } | DeviceAuthenticityError
+  > {
     return { error: 'Not available on web' };
   }
 
-  async isRooted(): Promise<{ error: string } | { isRooted: boolean }> {
+  async isRooted(): Promise<{ isRooted: boolean } | DeviceAuthenticityError> {
     return { error: 'Not available on web' };
   }
 
   async isNotInstalledFromAllowedStore(): Promise<
-    { error: string } | { isNotInstalledFromAllowedStore: boolean }
+    { isNotInstalledFromAllowedStore: boolean } | DeviceAuthenticityError
   > {
     return { error: 'Not available on web' };
   }
 
   async getApkCertSignature(): Promise<
-    { error: string } | { apkCertSignature: string }
+    { apkCertSignature: string } | DeviceAuthenticityError
   > {
     return { error: 'Not available on web' };
   }
 
   async checkApkCertSignature(): Promise<
-    { error: string } | { apkCertSignatureMatches: boolean }
+    { apkCertSignatureMatches: boolean } | DeviceAuthenticityError
   > {
     return { error: 'Not available on web' };
   }
 
-  async checkTags(): Promise<{ error: string } | { hasOffendingTags: boolean }> {
+  async checkTags(): Promise<
+    { hasOffendingTags: boolean } | DeviceAuthenticityError
+  > {
     return { error: 'Not available on web' };
   }
 
-  async checkPaths(): Promise<{ error: string } | { hasOffendingPaths: boolean }> {
+  async checkPaths(): Promise<
+    { hasOffendingPaths: boolean } | DeviceAuthenticityError
+  > {
     return { error: 'Not available on web' };
   }
 
   async checkExecutableFiles(): Promise<
-    { error: string } | { hasOffendingExecutableFiles: boolean }
+    { hasOffendingExecutableFiles: boolean } | DeviceAuthenticityError
   > {
     return { error: 'Not available on web' };
   }
   async hasThirdPartyAppStore(): Promise<
-    { error: string } | { hasThirdPartyAppStore: boolean }
+    { hasThirdPartyAppStore: boolean } | DeviceAuthenticityError
   > {
     return { error: 'Not available on web' };
   }
 
   async checkPrivateWrite(): Promise<
-    { error: string } | { canWritePrivate: boolean }
+    { canWritePrivate: boolean } | DeviceAuthenticityError
   > {
     return { error: 'Not available on web' };
   }

@@ -59,14 +59,14 @@ npx cap sync
 ### checkAuthenticity(...)
 
 ```typescript
-checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<DeviceAuthenticityResult>
+checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<DeviceAuthenticityResult | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                            |
 | ------------- | ------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticityoptions">DeviceAuthenticityOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#deviceauthenticityresult">DeviceAuthenticityResult</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityresult">DeviceAuthenticityResult</a> | <a href="#deviceauthenticityerror">DeviceAuthenticityError</a>&gt;</code>
 
 --------------------
 
@@ -85,14 +85,14 @@ isEmulator() => Promise<{ isEmulator: boolean; } | { error: string; }>
 ### isJailbroken(...)
 
 ```typescript
-isJailbroken(options?: DeviceAuthenticityJailbreakOptions | undefined) => Promise<{ isJailbroken: boolean; } | { error: string; }>
+isJailbroken(options?: DeviceAuthenticityJailbreakOptions | undefined) => Promise<{ isJailbroken: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticityjailbreakoptions">DeviceAuthenticityJailbreakOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ isJailbroken: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isJailbroken: boolean; }&gt;</code>
 
 --------------------
 
@@ -100,14 +100,14 @@ isJailbroken(options?: DeviceAuthenticityJailbreakOptions | undefined) => Promis
 ### isRooted(...)
 
 ```typescript
-isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isRooted: boolean; } | { error: string; }>
+isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isRooted: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                        |
 | ------------- | ------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticityrootedoptions">DeviceAuthenticityRootedOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ isRooted: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isRooted: boolean; }&gt;</code>
 
 --------------------
 
@@ -115,14 +115,14 @@ isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isR
 ### isNotInstalledFromAllowedStore(...)
 
 ```typescript
-isNotInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedStoreOptions | undefined) => Promise<{ isNotInstalledFromAllowedStore: boolean; } | { error: string; }>
+isNotInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedStoreOptions | undefined) => Promise<{ isNotInstalledFromAllowedStore: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                                                              |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticityinstalledfromallowedstoreoptions">DeviceAuthenticityInstalledFromAllowedStoreOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ isNotInstalledFromAllowedStore: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isNotInstalledFromAllowedStore: boolean; }&gt;</code>
 
 --------------------
 
@@ -130,10 +130,10 @@ isNotInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedS
 ### getApkCertSignature()
 
 ```typescript
-getApkCertSignature() => Promise<{ apkCertSignature: string; } | { error: string; }>
+getApkCertSignature() => Promise<{ apkCertSignature: string; } | DeviceAuthenticityError>
 ```
 
-**Returns:** <code>Promise&lt;{ apkCertSignature: string; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { apkCertSignature: string; }&gt;</code>
 
 --------------------
 
@@ -141,14 +141,14 @@ getApkCertSignature() => Promise<{ apkCertSignature: string; } | { error: string
 ### checkApkCertSignature(...)
 
 ```typescript
-checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions | undefined) => Promise<{ apkCertSignatureMatches: boolean; } | { error: string; }>
+checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions | undefined) => Promise<{ apkCertSignatureMatches: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                                                      |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitycheckapkcertsignatureoptions">DeviceAuthenticityCheckApkCertSignatureOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ apkCertSignatureMatches: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { apkCertSignatureMatches: boolean; }&gt;</code>
 
 --------------------
 
@@ -156,14 +156,14 @@ checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions |
 ### checkTags(...)
 
 ```typescript
-checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{ hasOffendingTags: boolean; } | { error: string; }>
+checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{ hasOffendingTags: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitychecktagsoptions">DeviceAuthenticityCheckTagsOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ hasOffendingTags: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasOffendingTags: boolean; }&gt;</code>
 
 --------------------
 
@@ -171,14 +171,14 @@ checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{
 ### checkPaths(...)
 
 ```typescript
-checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise<{ hasOffendingPaths: boolean; } | { error: string; }>
+checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise<{ hasOffendingPaths: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                                |
 | ------------- | --------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitycheckpathsoptions">DeviceAuthenticityCheckPathsOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ hasOffendingPaths: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasOffendingPaths: boolean; }&gt;</code>
 
 --------------------
 
@@ -186,14 +186,14 @@ checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise
 ### checkExecutableFiles(...)
 
 ```typescript
-checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | undefined) => Promise<{ hasOffendingExecutableFiles: boolean; } | { error: string; }>
+checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | undefined) => Promise<{ hasOffendingExecutableFiles: boolean; } | DeviceAuthenticityError>
 ```
 
 | Param         | Type                                                                                                                    |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#deviceauthenticitycheckexecutablefilesoptions">DeviceAuthenticityCheckExecutableFilesOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ hasOffendingExecutableFiles: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasOffendingExecutableFiles: boolean; }&gt;</code>
 
 --------------------
 
@@ -201,10 +201,10 @@ checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | u
 ### checkPrivateWrite()
 
 ```typescript
-checkPrivateWrite() => Promise<{ canWritePrivate: boolean; } | { error: string; }>
+checkPrivateWrite() => Promise<{ canWritePrivate: boolean; } | DeviceAuthenticityError>
 ```
 
-**Returns:** <code>Promise&lt;{ canWritePrivate: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { canWritePrivate: boolean; }&gt;</code>
 
 --------------------
 
@@ -212,10 +212,10 @@ checkPrivateWrite() => Promise<{ canWritePrivate: boolean; } | { error: string; 
 ### hasThirdPartyAppStore()
 
 ```typescript
-hasThirdPartyAppStore() => Promise<{ hasThirdPartyAppStore: boolean; } | { error: string; }>
+hasThirdPartyAppStore() => Promise<{ hasThirdPartyAppStore: boolean; } | DeviceAuthenticityError>
 ```
 
-**Returns:** <code>Promise&lt;{ hasThirdPartyAppStore: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasThirdPartyAppStore: boolean; }&gt;</code>
 
 --------------------
 
@@ -255,7 +255,12 @@ isError(value: unknown) => value is DeviceAuthenticityError
 
 #### DeviceAuthenticityResult
 
-<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isNotInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only apkCertSignature?: string; // If it is a string, it is the expected to be an error message. apkCertSignatureMatch?: boolean; // Android only hasOffendingExecutableFiles?: boolean; // Android only hasOffendingTags?: boolean; // iOS only hasOffendingPaths?: boolean; // iOS only canWritePrivate?: boolean; // iOS only hasThirdPartyAppStore?: boolean; // iOS only detectedThirdPartyAppStoreSchemas?: string[]; // iOS only detectedPrivateWritePaths?: string[]; // iOS only detectedOffendingPaths?: string[]; // Both Android and iOS failedChecks?: string[]; error?: string; }</code>
+<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isNotInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only apkCertSignature?: string; // If it is a string, it is the expected to be an error message. apkCertSignatureMatch?: boolean; // Android only hasOffendingExecutableFiles?: boolean; // Android only hasOffendingTags?: boolean; // iOS only hasOffendingPaths?: boolean; // iOS only canWritePrivate?: boolean; // iOS only hasThirdPartyAppStore?: boolean; // iOS only detectedThirdPartyAppStoreSchemas?: string[]; // iOS only detectedPrivateWritePaths?: string[]; // iOS only detectedOffendingPaths?: string[]; // Both Android and iOS failedChecks?: string[]; }</code>
+
+
+#### DeviceAuthenticityError
+
+<code>{ error: string; }</code>
 
 
 #### DeviceAuthenticityOptions
@@ -296,11 +301,6 @@ isError(value: unknown) => value is DeviceAuthenticityError
 #### DeviceAuthenticityCheckExecutableFilesOptions
 
 <code>{ rootIndicatorFiles: string[]; }</code>
-
-
-#### DeviceAuthenticityError
-
-<code>{ error: string; }</code>
 
 </docgen-api>
 
