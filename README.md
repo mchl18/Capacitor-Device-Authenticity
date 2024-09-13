@@ -324,35 +324,15 @@ if (DeviceAuthenticityWeb.isValid(result)) {
 ```typescript
   // only available on ios and android
   if (Capacitor.getPlatform() !== 'web') {
-    // TODO: add options to checkAuthenticity
     const authenticityResult = await DeviceAuthenticity.checkAuthenticity();
-    const failedChecks: string[] = [];
-    // TODO: put into plugin if possible
-    if (platform === 'ios') {
-      if (authenticityResult.isEmulator) failedChecks.push('isEmulator');
-      if (authenticityResult.isJailbroken) failedChecks.push('isJailbroken');
-      if (authenticityResult.hasPaths) failedChecks.push('hasPaths');
-      if (authenticityResult.hasThirdPartyAppStore)
-        failedChecks.push('hasThirdPartyAppStore');
-    } else if (platform === 'android') {
-      if (authenticityResult.isRooted) failedChecks.push('isRooted');
-      if (authenticityResult.isEmulator) failedChecks.push('isEmulator');
-      if (!authenticityResult.apkSignatureMatch)
-        failedChecks.push('apkSignatureMatch');
-      if (!authenticityResult.isInstalledFromAllowedStore)
-        failedChecks.push('isInstalledFromAllowedStore');
-    }
-
-    if (authenticityResult.error) {
-      failedChecks.push('error: ' + authenticityResult.error);
-    }
-
-    if (failedChecks.length > 0) {
+    if (DeviceAuthenticity.isValid(authenticityResult) && authenticityResult?.failedChecks?.length > 0) {
       alert(
         'Could not verify your device. Failed checks: ' +
           failedChecks.join(', ')
       );
       App.exitApp();
+    } else {
+      alert('Could not verify your device. Error: ' + authenticityResult?.error);
     }
   }
 ```
