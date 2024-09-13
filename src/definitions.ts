@@ -16,7 +16,7 @@ export interface DeviceAuthenticityPlugin {
     options?: DeviceAuthenticityOptions,
   ): Promise<DeviceAuthenticityResult | DeviceAuthenticityError>;
 
-  isEmulator(): Promise<{ isEmulator: boolean } | { error: string }>;
+  isEmulator(): Promise<{ isEmulator: boolean } | DeviceAuthenticityError>;
   // iOS only
   isJailbroken(
     options?: DeviceAuthenticityJailbreakOptions,

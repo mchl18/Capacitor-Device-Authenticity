@@ -74,10 +74,10 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 ### isEmulator()
 
 ```typescript
-isEmulator() => Promise<{ isEmulator: boolean; } | { error: string; }>
+isEmulator() => Promise<{ isEmulator: boolean; } | DeviceAuthenticityError>
 ```
 
-**Returns:** <code>Promise&lt;{ isEmulator: boolean; } | { error: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isEmulator: boolean; }&gt;</code>
 
 --------------------
 

@@ -1,6 +1,6 @@
 {
   "name": "capacitor-device-authenticity",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Check the authenticity of an Ionic Capacitor app",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -40,7 +40,9 @@
     "jailbreak",
     "root",
     "android",
-    "ios"
+    "ios",
+    "emulator",
+    "simulator"
   ],
   "scripts": {
     "verify": "npm run verify:ios && npm run verify:android && npm run verify:web",
