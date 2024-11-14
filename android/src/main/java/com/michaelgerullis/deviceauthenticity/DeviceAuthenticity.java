@@ -263,12 +263,23 @@ public class DeviceAuthenticity {
         }
     }
 
+    // Returns a lowercase hex string without colons of the SHA-256 hash of the signature
+    // todo: make it so we can specify the format (hex, base64, etc.)
     private String _calculateSignature(Signature sig) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(sig.toByteArray());
         byte[] digest = md.digest();
-        String signature = Base64.encodeToString(digest, Base64.DEFAULT);
-        return signature.replace(":", "").toLowerCase();
+        
+        // Convert to colon-separated hex format
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) {
+            String hex = String.format("%02X", b);
+            if (hexString.length() > 0) {
+                hexString.append(":");
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString().replace(":", "").toLowerCase();
     }
 
     // @TODO: add ability to pass extra emulator checks
