@@ -322,10 +322,12 @@ if (DeviceAuthenticityWeb.isValid(result)) {
 (will try and simplify this)
 
 ```typescript
+import { DeviceAuthenticity, isValid } from 'capacitor-device-authenticity';
+
   // only available on ios and android
   if (Capacitor.getPlatform() !== 'web') {
     const authenticityResult = await DeviceAuthenticity.checkAuthenticity();
-    if (DeviceAuthenticity.isValid(authenticityResult) && authenticityResult?.failedChecks?.length > 0) {
+    if (isValid(authenticityResult) && authenticityResult?.failedChecks?.length > 0) {
       alert(
         'Could not verify your device. Failed checks: ' +
           failedChecks.join(', ')
