@@ -310,7 +310,7 @@ In order to check a value we need to use the type guards `isValid` and `isError`
 
 ```typescript
 const result = await DeviceAuthenticityWeb.checkTags();
-if (DeviceAuthenticityWeb.isValid(result)) {
+if (!isError(result)) {
   const hasSuspiciousTags: boolean = result;
 } else {
   const error: DeviceAuthenticityError = result;
@@ -322,12 +322,12 @@ if (DeviceAuthenticityWeb.isValid(result)) {
 (will try and simplify this)
 
 ```typescript
-import { DeviceAuthenticity, isValid } from 'capacitor-device-authenticity';
+import { DeviceAuthenticity, isError } from 'capacitor-device-authenticity';
 
   // only available on ios and android
   if (Capacitor.getPlatform() !== 'web') {
     const authenticityResult = await DeviceAuthenticity.checkAuthenticity();
-    if (isValid(authenticityResult) && authenticityResult?.failedChecks?.length > 0) {
+    if (!isError(authenticityResult) && authenticityResult?.failedChecks?.length > 0) {
       alert(
         'Could not verify your device. Failed checks: ' +
           failedChecks.join(', ')

@@ -5,7 +5,7 @@ import type {
   DeviceAuthenticityError,
   DeviceAuthenticityOptions,
 } from './types';
-import { isValid, isError } from './utils';
+import { isError } from './utils';
 
 const DeviceAuthenticity = registerPlugin<DeviceAuthenticityPlugin>(
   'DeviceAuthenticity',
@@ -18,7 +18,6 @@ export * from './definitions';
 export {
   DeviceAuthenticity,
   isError,
-  isValid,
   DeviceAuthenticityError,
   DeviceAuthenticityOptions,
 };
