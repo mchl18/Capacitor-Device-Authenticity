@@ -47,7 +47,6 @@ npx cap sync
 * [`checkExecutableFiles(...)`](#checkexecutablefiles)
 * [`checkPrivateWrite()`](#checkprivatewrite)
 * [`hasThirdPartyAppStore()`](#hasthirdpartyappstore)
-* [`isValid(...)`](#isvalid)
 * [`isError(...)`](#iserror)
 * [Type Aliases](#type-aliases)
 
@@ -216,21 +215,6 @@ hasThirdPartyAppStore() => Promise<{ hasThirdPartyAppStore: boolean; } | DeviceA
 ```
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasThirdPartyAppStore: boolean; }&gt;</code>
-
---------------------
-
-
-### isValid(...)
-
-```typescript
-isValid(value: unknown) => value is string | boolean
-```
-
-| Param       | Type                 |
-| ----------- | -------------------- |
-| **`value`** | <code>unknown</code> |
-
-**Returns:** <code>boolean</code>
 
 --------------------
 
