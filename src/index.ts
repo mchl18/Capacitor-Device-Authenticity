@@ -1,6 +1,7 @@
 import { registerPlugin } from '@capacitor/core';
 
 import type { DeviceAuthenticityPlugin } from './definitions';
+import { isValid, isError } from './utils';
 
 const DeviceAuthenticity = registerPlugin<DeviceAuthenticityPlugin>(
   'DeviceAuthenticity',
@@ -10,4 +11,4 @@ const DeviceAuthenticity = registerPlugin<DeviceAuthenticityPlugin>(
 );
 
 export * from './definitions';
-export { DeviceAuthenticity };
+export { DeviceAuthenticity, isError, isValid };
