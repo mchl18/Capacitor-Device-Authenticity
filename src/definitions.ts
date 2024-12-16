@@ -61,4 +61,5 @@ export interface DeviceAuthenticityPlugin {
     { hasThirdPartyAppStore: boolean } | DeviceAuthenticityError
   >;
   isError(value: unknown): value is DeviceAuthenticityError;
+  isValid(value: unknown): value is boolean | string;
 }

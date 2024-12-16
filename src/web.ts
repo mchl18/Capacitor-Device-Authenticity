@@ -5,6 +5,7 @@ import type {
   DeviceAuthenticityError,
   DeviceAuthenticityResult,
 } from './types';
+import { isError } from './utils';
 
 export class DeviceAuthenticityWeb
   extends WebPlugin
@@ -126,15 +127,6 @@ export class DeviceAuthenticityWeb
     return { error: 'Not available on web' };
   }
 
-  // In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
-  isValid(value: unknown): value is boolean | string {
-    return (
-      typeof value === 'boolean' ||
-      (typeof value === 'string' && !('error' in (value as never as object)))
-    );
-  }
-  // In order to check a value we need to use the type guards `isValid` and `isError` along with a cast to boolean if it is not an error.
-  isError(value: unknown): value is DeviceAuthenticityError {
-    return typeof value === 'object' && value !== null && 'error' in value;
-  }
+  isValid = (value: unknown): value is boolean | string => !isError(value);
+  isError = isError;
 }
