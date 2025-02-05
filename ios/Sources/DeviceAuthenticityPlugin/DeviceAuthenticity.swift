@@ -156,7 +156,9 @@ class DeviceAuthenticity {
             "/private/var/stash",
             "/private/var/db/stash",
             "/private/var/jailbreak",
-            "/var/mobile/Library/SBSettings/Themes"
+            "/var/mobile/Library/SBSettings/Themes",
+            "/Library/MobileSubstrate/DynamicLibraries",
+            "/var/jb"
         ]
         var paths: [String] = [];
         let pathsToCheck = jailbreakIndicatorPaths.count > 0 ? jailbreakIndicatorPaths : jailbreakPaths
